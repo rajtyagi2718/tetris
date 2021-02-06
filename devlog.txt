@@ -1,0 +1,30 @@
+bitboard
+  BitStr
+    getboard()
+    getline()
+    getipiece0()
+    getipiece1()
+    getipiece2()
+    getipiece3()
+    ...
+    getspiece0()
+    ..
+    getspiece3()
+    
+    bitstrtouint256()
+    uint256tobitstr()
+
+  BitBoard
+    board
+    line
+    width
+    ipiece0
+    ipiece1
+    ipiece2
+    ipiece3
+    ... 
+    spiece0
+    ... 
+    spiece3
+
+    print()

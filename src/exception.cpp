@@ -1,6 +1,6 @@
-#include "../include/exception.h"
-#include <sstream>  // ostringstream
-#include <string>  // to_string
+#include "../include/exception.h"  // BoardIndexException
+#include <sstream>                 // ostringstream
+#include <string>                  // to_string
 
 BoardIndexException::BoardIndexException(int index)
   : index{index}

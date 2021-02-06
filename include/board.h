@@ -2,7 +2,7 @@
 #define BOARD_H
 
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <iostream>                          // ostream
+#include <ostream>                           // ostream
 
 namespace mp = boost::multiprecision;
 

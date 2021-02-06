@@ -1,22 +1,15 @@
 #include "../include/board.h"                // Board
-#include "../include/bitutils.h"             // BoardInt
-#include "../include/exception.h"            // BoardException
-#include <boost/multiprecision/cpp_int.hpp>
-#include <iostream>                          // ostream
-#include <string>
+#include "../include/bitboard.h"             // print
+#include "../include/exception.h"            // 
+#include <ostream>                           // ostream
+#include <string>                            // string
 
 Board::Board()
-  : bigint{BoardInt::start}
+  : bigint{bitboard::bigints::board}
 {
 }
 
 std::ostream& operator<<(std::ostream& os, const Board& board)
 {
-  std::string bitstr{BoardInt::uint256tobitstr(board.bigint)};
-  for (int i = 0; i < bitstr.size(); i += BoardInt::width)
-  {
-    os << bitstr.substr(i, BoardInt::width) << '\n';
-  }
-
-  return os; 
+  return bitboard::utils::print(os, board.bigint);
 }

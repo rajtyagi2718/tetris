@@ -1,7 +1,8 @@
-#include "../include/board.h"  // Board
+#include "../include/piece.h"  // 
 #include <gtest/gtest.h>       // TEST EXPECT_TRUE
 
-TEST(BoardTest, Throw)
+TEST(PieceTest, Test)
 {
+  IPiece I{};
   EXPECT_TRUE(true);
 }
