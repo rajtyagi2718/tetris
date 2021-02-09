@@ -10,7 +10,8 @@ namespace mp = boost::multiprecision;
 class Piece
 {
   public:
-    mp::uint256_t getbigint() const;
+    mp::uint256_t getbigint();
+    const mp::uint256_t& getbigint() const;
     friend std::ostream& operator<<(std::ostream& os, const Piece& piece); 
     virtual void rotateright();
     virtual void rotateleft();

@@ -7,3 +7,17 @@ game
     piece
   agent
     search
+
+g++ -std=c++17 -c ../src/exception.cpp -o ../build/exception.o
+g++ -std=c++17 -c ../src/bitboard_internal.cpp -o ../build/bitboard_internal.o
+g++ -std=c++17 -c ../src/bitboard.cpp -o ../build/bitboard.o
+g++ -std=c++17 -c ../src/board.cpp -o ../build/board.o
+g++ -std=c++17 -c piecetest.cpp -o piecetest.o
+g++ -std=c++17 -c ../src/piece.cpp -o ../build/piece.o
+g++ -std=c++17 -c agenttest.cpp -o agenttest.o
+g++ -std=c++17 -c ../src/agent.cpp -o ../build/agent.o
+g++ -std=c++17 main.o exceptiontest.o ../build/exception.o bitboard_internaltest.o ../build/bitboard_internal.o bitboardtest.o ../build/bitboard.o boardtest.o ../build/board.o piecetest.o ../build/piece.o agenttest.o ../build/agent.o -lgtest -lgtest_main -pthread -o alltests
+
+
+g++ -std=c++17 -c ../src/board.cpp -o ../build/board.o
+g++ -std=c++17 main.o exceptiontest.o ../build/exception.o bitboard_internaltest.o ../build/bitboard_internal.o bitboardtest.o ../build/bitboard.o boardtest.o ../build/board.o piecetest.o ../build/piece.o agenttest.o ../build/agent.o -lgtest -lgtest_main -pthread -o alltests

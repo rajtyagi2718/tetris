@@ -22,6 +22,7 @@ namespace bitboard
 
     extern const mp::uint256_t board;
     extern const mp::uint256_t line;
+    extern const mp::uint256_t top;
 
     extern const mp::uint256_t ipiece0; 
     extern const mp::uint256_t ipiece1; 

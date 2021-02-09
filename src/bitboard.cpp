@@ -4,6 +4,7 @@
 #include <boost/range/adaptor/reversed.hpp>  // reverse
 #include <ostream>                           // ostream 
 #include <string>                            // string
+#include <algorithm>                         // min
 
 namespace mp = boost::multiprecision;
 namespace ba = boost::adaptors;
@@ -17,7 +18,9 @@ namespace bitboard
     std::ostream& print(std::ostream& os, mp::uint256_t bigint)
     {
       std::string bitstr{internal::uint256tobitstr(bigint)};
-      for (int i = 0; i < bitstr.size(); i += width)
+      std::string::size_type stop {253};
+      stop = std::min(stop, bitstr.size());
+      for (std::string::size_type i = 0; i < stop; i += width)
       {
         os << bitstr.substr(i, width) << '\n';
       }
@@ -50,7 +53,8 @@ namespace bitboard
                                                           "10000000000"
                                                           "10000000000"
                                                           "10000000000"
-                                                          "11111111111")};
+                                                          "11111111111"
+                                                          "111"        )};
 
     const mp::uint256_t    line{internal::bitstrtouint256("11111111111")};
 

@@ -17,8 +17,15 @@ Piece::Piece(mp::uint256_t r)
 {
 }
 
-mp::uint256_t Piece::getbigint() const
+mp::uint256_t Piece::getbigint()
 {
+  std::cout << "piece getter" << std::endl;
+  return rotations[rot];
+}
+
+const mp::uint256_t& Piece::getbigint() const
+{
+  std::cout << "piece const getter" << std::endl;
   return rotations[rot];
 }
 
