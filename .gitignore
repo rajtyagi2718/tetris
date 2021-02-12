@@ -3,3 +3,9 @@
 
 # vim session
 session
+
+# temp files
+temp.cpp
+temp.h
+./temp
+devlog.txt

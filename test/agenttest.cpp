@@ -1,6 +1,10 @@
 #include "../include/agent.h"  // RandomAgent
 #include <gtest/gtest.h>       // TEST EXPECT_TRUE
 
+namespace agenttest
+{
+using namespace agent;
+
 TEST(AgentTest, Throw)
 {
   RandomAgent ra{};
@@ -21,3 +25,4 @@ TEST(AgentTest, Throw)
 
   EXPECT_TRUE(true);
 }
+}  // namespace agenttest

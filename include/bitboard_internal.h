@@ -2,17 +2,17 @@
 #define BITBOARD_INTERNAL_H
 
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
+#include <vector>                            // vector
 #include <string>                            // string
-#include <sstream>                           // ostringstream
-
-namespace mp = boost::multiprecision;
 
 namespace bitboard
 {
+  using uint256_t = boost::multiprecision::uint256_t;
+
   namespace internal
   {
-    std::string uint256tobitstr(mp::uint256_t bigint);
-    mp::uint256_t bitstrtouint256(const std::string& str);
+    std::string uint256tobitstr(uint256_t bigint);
+    uint256_t bitvectouint256(std::vector<unsigned char> bitvec);
   }
 }
 

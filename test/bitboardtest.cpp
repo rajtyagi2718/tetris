@@ -1,11 +1,16 @@
-#include "../include/bitboard.h"  // bitboard
-#include <gtest/gtest.h>          // TEST EXPECT_TRUE
-#include <sstream>                // ostringstream
+#include "../include/bitboard.h" // bitboard
+#include <gtest/gtest.h>         // TEST EXPECT_TRUE
+#include <sstream>               // ostringstream
 #include <iostream>
+
+namespace bitboardtest
+{
+using namespace bitboard;
 
 TEST(BitBoardTest, Throw)
 {
   std::ostringstream oss{};
-  bitboard::utils::print(oss, bitboard::bigints::ipiece0);
+  bitboard::print(oss, bitboard::ipiece0, false);
   EXPECT_TRUE(true) << oss.str();
 }
+} // namespace bitboardtest

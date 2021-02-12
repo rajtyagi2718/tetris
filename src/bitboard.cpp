@@ -1,161 +1,205 @@
 #include "../include/bitboard.h"             // bitboard
-#include "../include/bitboard_internal.h"    // bitboard
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <boost/range/adaptor/reversed.hpp>  // reverse
 #include <ostream>                           // ostream 
 #include <string>                            // string
+#include <vector>                            // vector
 #include <algorithm>                         // min
-
-namespace mp = boost::multiprecision;
-namespace ba = boost::adaptors;
+#include <iterator>                          // back_inserter
+#include <iostream>
 
 namespace bitboard
 {
-  namespace utils
-  {
-    const int width = 11;
+const int width = 11;
 
-    std::ostream& print(std::ostream& os, mp::uint256_t bigint)
+std::ostream& print(std::ostream& os, const uint256_t& bigint, bool resize)
+{
+  std::vector<unsigned char> bitvec {};
+  boost::multiprecision::export_bits(bigint, std::back_inserter(bitvec), 1);
+  if (resize)
+  {
+    bitvec.erase(bitvec.begin(), bitvec.end()-253); 
+  }
+
+  int curwidth = 11;
+  for (auto it = bitvec.crbegin(); it != bitvec.crend(); it++)
+  {
+    os << bool(*it) << ' ';
+    if (!(--curwidth))
     {
-      std::string bitstr{internal::uint256tobitstr(bigint)};
-      std::string::size_type stop {253};
-      stop = std::min(stop, bitstr.size());
-      for (std::string::size_type i = 0; i < stop; i += width)
-      {
-        os << bitstr.substr(i, width) << '\n';
-      }
-    
-      return os; 
+      os << '\n';
+      curwidth = 11;
     }
   }
 
-  namespace bigints
-  {
-    const mp::uint256_t   board{internal::bitstrtouint256("10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "10000000000"
-                                                          "11111111111"
-                                                          "111"        )};
-
-    const mp::uint256_t    line{internal::bitstrtouint256("11111111111")};
-
-    const mp::uint256_t ipiece0{internal::bitstrtouint256("00000000000"
-                                                          "00001111000")}; 
-
-    const mp::uint256_t ipiece1{internal::bitstrtouint256("00000010000"
-                                                          "00000010000"
-                                                          "00000010000"
-                                                          "00000010000")};                             
-
-    const mp::uint256_t ipiece2{internal::bitstrtouint256("00000000000"
-                                                          "00000000000"
-                                                          "00000000000"
-                                                          "00001111000")}; 
-
-    const mp::uint256_t ipiece3{internal::bitstrtouint256("00000100000"
-                                                          "00000100000"
-                                                          "00000100000"
-                                                          "00000100000")}; 
-
-    const mp::uint256_t  opiece{internal::bitstrtouint256("00000110000"
-                                                          "00000110000")}; 
-
-    const mp::uint256_t tpiece0{internal::bitstrtouint256("00000100000"
-                                                          "00001110000")}; 
-
-    const mp::uint256_t tpiece1{internal::bitstrtouint256("00000100000"
-                                                          "00000110000"
-                                                          "00000100000")}; 
-
-    const mp::uint256_t tpiece2{internal::bitstrtouint256("00000000000"
-                                                          "00001110000"
-                                                          "00000100000")}; 
-
-    const mp::uint256_t tpiece3{internal::bitstrtouint256("00000100000"
-                                                          "00001100000"
-                                                          "00000100000")}; 
-
-    const mp::uint256_t jpiece0{internal::bitstrtouint256("00001000000"
-                                                          "00001110000"
-                                                          "00000000000")}; 
-
-    const mp::uint256_t jpiece1{internal::bitstrtouint256("00000110000"
-                                                          "00000100000"
-                                                          "00000100000")}; 
-
-    const mp::uint256_t jpiece2{internal::bitstrtouint256("00000000000"
-                                                          "00001110000"
-                                                          "00000010000")}; 
-
-    const mp::uint256_t jpiece3{internal::bitstrtouint256("00000100000"
-                                                          "00000100000"
-                                                          "00001100000")}; 
-
-    const mp::uint256_t lpiece0{internal::bitstrtouint256("00000010000"
-                                                          "00001110000"
-                                                          "00000000000")}; 
-
-    const mp::uint256_t lpiece1{internal::bitstrtouint256("00000100000"
-                                                          "00000100000"
-                                                          "00000110000")}; 
-
-    const mp::uint256_t lpiece2{internal::bitstrtouint256("00000000000"
-                                                          "00001110000"
-                                                          "00001000000")}; 
-
-    const mp::uint256_t lpiece3{internal::bitstrtouint256("00001100000"
-                                                          "00000100000"
-                                                          "00000100000")}; 
-
-    const mp::uint256_t zpiece0{internal::bitstrtouint256("00001100000"
-                                                          "00000110000"
-                                                          "00000000000")}; 
-
-    const mp::uint256_t zpiece1{internal::bitstrtouint256("00000010000"
-                                                          "00000110000"
-                                                          "00000100000")}; 
-
-    const mp::uint256_t zpiece2{internal::bitstrtouint256("00000000000"
-                                                          "00000110000"
-                                                          "00001100000")}; 
-
-    const mp::uint256_t zpiece3{internal::bitstrtouint256("00001000000"
-                                                          "00001100000"
-                                                          "00000100000")}; 
-
-    const mp::uint256_t spiece0{internal::bitstrtouint256("00000110000"
-                                                          "00001100000"
-                                                          "00000000000")}; 
-
-    const mp::uint256_t spiece1{internal::bitstrtouint256("00000100000"
-                                                          "00000110000"
-                                                          "00000010000")}; 
-
-    const mp::uint256_t spiece2{internal::bitstrtouint256("00000000000"
-                                                          "00000110000"
-                                                          "00001100000")}; 
-
-    const mp::uint256_t spiece3{internal::bitstrtouint256("00001000000"
-                                                          "00001100000"
-                                                          "00000100000")}; 
-  }
+  return os; 
 }
+
+const uint256_t board {internal::bitvectouint256(
+  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+   1, 1, 1                        })};
+
+const uint256_t line {internal::bitvectouint256(
+  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
+
+const uint256_t ipiece0 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0})}; 
+
+const uint256_t ipiece1 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})};                             
+
+const uint256_t ipiece2 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0})}; 
+
+const uint256_t ipiece3 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t opiece {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0})}; 
+
+const uint256_t tpiece0 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0})}; 
+
+const uint256_t tpiece1 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t tpiece2 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t tpiece3 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t jpiece0 {internal::bitvectouint256(
+  {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})}; 
+
+const uint256_t jpiece1 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t jpiece2 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})}; 
+
+const uint256_t jpiece3 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t lpiece0 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})}; 
+
+const uint256_t lpiece1 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0})}; 
+
+const uint256_t lpiece2 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0})}; 
+
+const uint256_t lpiece3 {internal::bitvectouint256(
+  {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t zpiece0 {internal::bitvectouint256(
+  {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})}; 
+
+const uint256_t zpiece1 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t zpiece2 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t zpiece3 {internal::bitvectouint256(
+  {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t spiece0 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})}; 
+
+const uint256_t spiece1 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})}; 
+
+const uint256_t spiece2 {internal::bitvectouint256(
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0})}; 
+
+const uint256_t spiece3 {internal::bitvectouint256(
+  {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
+
+namespace internal
+{
+uint256_t bitvectouint256(std::vector<unsigned char> bitvec)
+{
+  uint256_t ret;
+  // unsigned chunk_size = 1 bit
+  // msv_first = false  i.e.  bigendian
+  boost::multiprecision::import_bits(
+    ret, bitvec.begin(), bitvec.end(), 1, false);
+
+  return ret;
+}  
+}  // namespace internal
+}  // namespace bitboard

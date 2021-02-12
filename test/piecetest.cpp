@@ -2,6 +2,10 @@
 #include <gtest/gtest.h>       // TEST EXPECT_TRUE
 #include <iostream>            // cout
 
+namespace piecetest
+{
+using namespace piece;
+
 TEST(PieceTest, Test)
 {
   IPiece I{};
@@ -12,3 +16,4 @@ TEST(PieceTest, Test)
   std::cout << "[          ] I-Piece down\n" << I << std::endl; 
   EXPECT_TRUE(true);
 }
+}  // namespace piecetest

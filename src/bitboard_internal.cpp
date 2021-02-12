@@ -1,17 +1,15 @@
 #include "../include/bitboard_internal.h"    // bitboard
-#include <boost/multiprecision/cpp_int.hpp>  // uint256_t
+#include <boost/multiprecision/cpp_int.hpp>  // uint256_t import_bits
 #include <boost/range/adaptor/reversed.hpp>  // reverse
+#include <vector>                            // vector
 #include <string>                            // string
 #include <sstream>                           // ostringstream
-
-namespace mp = boost::multiprecision;
-namespace ba = boost::adaptors;
 
 namespace bitboard
 {
   namespace internal
   { 
-    std::string uint256tobitstr(mp::uint256_t bigint)
+    std::string uint256tobitstr(uint256_t bigint)
     {
       std::ostringstream oss {};
       while (bigint)
@@ -22,21 +20,16 @@ namespace bitboard
     
       return oss.str();
     } 
-  
-    mp::uint256_t bitstrtouint256(const std::string& bitstr)
+
+    uint256_t bitvectouint256(std::vector<unsigned char> bitvec)
     {
-      mp::uint256_t res{0};
-      for (auto& bitchr : ba::reverse(bitstr))
-      {
-        // last '1' of bitstr = most significant bit of int
-        res <<= 1;
-        if (bitchr == '1')
-        {
-          res += 1;
-        }
-      }
+      uint256_t ret;
+      // unsigned chunk_size = 1 bit
+      // msv_first = false  i.e.  bigendian
+      boost::multiprecision::import_bits(
+        ret, bitvec.begin(), bitvec.end(), 1, false);
     
-      return res;
+      return ret;
     }
   }
 }

@@ -5,13 +5,15 @@
 #include <vector>                            // vector
 #include <ostream>                           // ostream
 
-namespace mp = boost::multiprecision;
+namespace piece
+{
+using boost::multiprecision::uint256_t;
 
 class Piece
 {
   public:
-    mp::uint256_t getbigint();
-    const mp::uint256_t& getbigint() const;
+    uint256_t getbigint();
+    const uint256_t& getbigint() const;
     friend std::ostream& operator<<(std::ostream& os, const Piece& piece); 
     virtual void rotateright();
     virtual void rotateleft();
@@ -22,13 +24,12 @@ class Piece
 
   protected:  
     // abstract class
-    Piece(mp::uint256_t r0, mp::uint256_t r1, mp::uint256_t r2, 
-          mp::uint256_t r3);  
-    Piece(mp::uint256_t r);  
+    Piece(uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3);  
+    Piece(uint256_t r);  
 
   private:
     int rot;
-    std::vector<mp::uint256_t> rotations;
+    std::vector<uint256_t> rotations;
 };
 
 class IPiece : public Piece
@@ -74,5 +75,6 @@ class SPiece : public Piece
   public:
     SPiece();
 };
+}  // namespace piece
 
-#endif
+#endif  // PIECE_H

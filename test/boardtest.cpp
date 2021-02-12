@@ -1,10 +1,13 @@
-#include "../include/board.h"  // Board
+#include "../include/board.h"                // Board
 #include "../include/bitboard.h"             // print
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <gtest/gtest.h>       // TEST EXPECT_TRUE
-#include <iostream>            // cout endl
+#include <gtest/gtest.h>                     // TEST EXPECT_TRUE
+#include <iostream>                          // cout endl
 
-namespace mp = boost::multiprecision;
+namespace boardtest
+{
+using namespace board;
+using boost::multiprecision::uint256_t;
 
 TEST(BoardTest, Throw)
 {
@@ -12,8 +15,8 @@ TEST(BoardTest, Throw)
 
   std::cout << "board start\n" << board << std::endl;
 
-  int width = bitboard::utils::width;
-  mp::uint256_t line{bitboard::bigints::line};
+  int width = bitboard::width;
+  uint256_t line{bitboard::line};
   for (auto i : {3, 2, 1, 2, 1, 1, 4, 1, 1, 1})
   {
     line <<= width * i;
@@ -26,3 +29,4 @@ TEST(BoardTest, Throw)
 
   EXPECT_TRUE(true);
 }
+}  // namespace boardtest

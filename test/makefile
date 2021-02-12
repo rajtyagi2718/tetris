@@ -1,5 +1,5 @@
-alltests: main.o exceptiontest.o exception.o bitboard_internaltest.o bitboard_internal.o bitboardtest.o bitboard.o boardtest.o board.o piecetest.o piece.o agenttest.o agent.o
-	g++ -std=c++17 main.o exceptiontest.o ../build/exception.o bitboard_internaltest.o ../build/bitboard_internal.o bitboardtest.o ../build/bitboard.o boardtest.o ../build/board.o piecetest.o ../build/piece.o agenttest.o ../build/agent.o -lgtest -lgtest_main -pthread -o alltests
+alltests: main.o exceptiontest.o exception.o bitboardtest.o bitboard.o boardtest.o board.o piecetest.o piece.o agenttest.o agent.o gametest.o game.o
+	g++ -std=c++17 main.o exceptiontest.o ../build/exception.o bitboardtest.o ../build/bitboard.o boardtest.o ../build/board.o piecetest.o ../build/piece.o agenttest.o ../build/agent.o gametest.o ../build/game.o -lgtest -lgtest_main -pthread -o alltests
 
 main.o:
 	g++ -std=c++17 -c main.cpp -o main.o
@@ -9,12 +9,6 @@ exceptiontest.o:
 
 exception.o:
 	g++ -std=c++17 -c ../src/exception.cpp -o ../build/exception.o
-
-bitboard_internaltest.o:
-	g++ -std=c++17 -c bitboard_internaltest.cpp -o bitboard_internaltest.o
-
-bitboard_internal.o:
-	g++ -std=c++17 -c ../src/bitboard_internal.cpp -o ../build/bitboard_internal.o
 
 bitboardtest.o:
 	g++ -std=c++17 -c bitboardtest.cpp -o bitboardtest.o
@@ -39,6 +33,12 @@ agenttest.o:
 
 agent.o:
 	g++ -std=c++17 -c ../src/agent.cpp -o ../build/agent.o
+
+gametest.o:
+	g++ -std=c++17 -c gametest.cpp -o gametest.o
+
+game.o:
+	g++ -std=c++17 -c ../src/game.cpp -o ../build/game.o
 
 clean:
 	rm ./alltests *.o

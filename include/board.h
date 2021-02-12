@@ -4,23 +4,26 @@
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <ostream>                           // ostream
 
-namespace mp = boost::multiprecision;
+namespace board
+{
+using boost::multiprecision::uint256_t;
 
 class Board
 {
   public:
     Board();
-    mp::uint256_t getbigint();
-    const mp::uint256_t& getbigint() const;
+    uint256_t getbigint();
+    const uint256_t& getbigint() const;
     friend std::ostream& operator<<(std::ostream& os, const Board& board);
-    bool checkpiece(const mp::uint256_t& piece);  
-    void addpiece(const mp::uint256_t& piece);  
-    bool trypiece(const mp::uint256_t& piece);  
-    void rempiece(const mp::uint256_t& piece);  
+    bool checkpiece(const uint256_t& piece);  
+    void addpiece(const uint256_t& piece);  
+    bool trypiece(const uint256_t& piece);  
+    void rempiece(const uint256_t& piece);  
     void clearlines();
 
   private:
-    mp::uint256_t bigint;
+    uint256_t bigint;
 };
+}  // namespace board
 
-#endif
+#endif  // BOARD_H

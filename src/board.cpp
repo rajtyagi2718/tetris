@@ -1,44 +1,45 @@
 #include "../include/board.h"                // Board
 #include "../include/bitboard.h"             // print
-#include "../include/bitboard_internal.h"             // print
 #include "../include/exception.h"            // 
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <ostream>                           // ostream
 #include <string>                            // string
 #include <iostream>
 
+namespace board
+{
 Board::Board()
-  : bigint{bitboard::bigints::board}
+  : bigint{bitboard::board}
 {
 }
 
-mp::uint256_t Board::getbigint()
+uint256_t Board::getbigint()
 {
   std::cout << "board getter" << std::endl;
   return bigint;
 }
 
-const mp::uint256_t& Board::getbigint() const
+const uint256_t& Board::getbigint() const
 {
   std::cout << "board const getter" << std::endl;
   return bigint;
 }
 std::ostream& operator<<(std::ostream& os, const Board& board)
 {
-  return bitboard::utils::print(os, board.bigint);
+  return bitboard::print(os, board.bigint, true);
 }
 
-bool Board::checkpiece(const mp::uint256_t& piece)
+bool Board::checkpiece(const uint256_t& piece)
 {
   return !(bigint & piece);
 }
 
-void Board::addpiece(const mp::uint256_t& piece)
+void Board::addpiece(const uint256_t& piece)
 {
   bigint |= piece; 
 }
 
-bool Board::trypiece(const mp::uint256_t& piece)
+bool Board::trypiece(const uint256_t& piece)
 {
   if (!(bigint & piece))
   {
@@ -49,7 +50,7 @@ bool Board::trypiece(const mp::uint256_t& piece)
   return false;
 }
 
-void Board::rempiece(const mp::uint256_t& piece)
+void Board::rempiece(const uint256_t& piece)
 {
   bigint &= ~piece;
 }
@@ -58,9 +59,9 @@ void Board::clearlines()
 {
   // TODO fast check any lines full
   // TODO only check lines within piece range 
-  int width = bitboard::utils::width;
-  mp::uint256_t line{bitboard::bigints::line}; 
-  mp::uint256_t upper{bitboard::bigints::line};
+  int width = bitboard::width;
+  uint256_t line{bitboard::line}; 
+  uint256_t upper{bitboard::line};
   line <<= width; 
   upper |= line;
   line <<= width; 
@@ -80,5 +81,6 @@ void Board::clearlines()
     line <<= width;
   }
 
-  bigint |= bitboard::bigints::board; 
+  bigint |= bitboard::board; 
 }
+}  // namespace board
