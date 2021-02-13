@@ -2,8 +2,6 @@
 #include <string>              // string
 #include <random>              // random_device mt19937 uniform_int_distribution
 
-namespace agent
-{
 Agent::Agent(std::string name)
   : name{name} 
 {
@@ -21,4 +19,3 @@ int RandomAgent::act(uint256_t board)
   static std::uniform_int_distribution<> distrib(0, 4);
   return distrib(gen);
 }
-}  // namespace agent

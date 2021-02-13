@@ -1,11 +1,12 @@
 #include "../include/piece.h"                // []Piece
 #include "../include/bitboard.h"             // print width []piece[]
+#include "../include/exception.h"            // SpawnPieceIndexException
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <ostream>                           // ostream
 #include <iostream>
+#include <memory>                            // unique_ptr make_unique
+#include <random>                            // random_device mt19937 uniform_int_distribution
 
-namespace piece
-{
 Piece::Piece(uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3)  
   : rot{0}, rotations{r0, r1, r2, r3}
 {
@@ -75,6 +76,14 @@ void Piece::right()
   }
 }
 
+bool Piece::top() const
+{
+  uint256_t upper {bitboard::line}; 
+  upper = upper | (upper << bitboard::width);
+  return !(getbigint() & ~upper);
+}
+
+
 IPiece::IPiece()
   : Piece(bitboard::ipiece0, 
           bitboard::ipiece1, 
@@ -136,4 +145,24 @@ SPiece::SPiece()
           bitboard::spiece3)
 {
 }
-}  // namespace piece 
+
+std::unique_ptr<Piece> spawnpiece()
+{
+  static std::random_device rd; 
+  static std::mt19937 gen(rd());
+  static std::uniform_int_distribution<> distrib(0, 6);
+  int p = distrib(gen);
+  switch (p)
+  {
+    case 0: return std::make_unique<IPiece>();
+    case 1: return std::make_unique<OPiece>();
+    case 2: return std::make_unique<TPiece>();
+    case 3: return std::make_unique<JPiece>();
+    case 4: return std::make_unique<LPiece>();
+    case 5: return std::make_unique<ZPiece>();
+    case 6: return std::make_unique<SPiece>();
+  }
+  
+  SpawnPieceIndexException exc {p};
+  throw exc;
+}

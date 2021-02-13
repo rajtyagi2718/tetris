@@ -5,8 +5,6 @@
 
 namespace bitboardtest
 {
-using namespace bitboard;
-
 TEST(BitBoardTest, Throw)
 {
   std::ostringstream oss{};

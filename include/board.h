@@ -4,8 +4,6 @@
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <ostream>                           // ostream
 
-namespace board
-{
 using boost::multiprecision::uint256_t;
 
 class Board
@@ -24,6 +22,5 @@ class Board
   private:
     uint256_t bigint;
 };
-}  // namespace board
 
 #endif  // BOARD_H

@@ -3,8 +3,6 @@
 
 namespace agenttest
 {
-using namespace agent;
-
 TEST(AgentTest, Throw)
 {
   RandomAgent ra{};

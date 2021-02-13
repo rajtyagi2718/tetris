@@ -5,8 +5,6 @@
 #include <string>                              // string
 #include <sstream>                             // ostream
 
-namespace agent
-{
 using boost::multiprecision::uint256_t;
 
 enum Action {null, rotateright, rotateleft, left, right};
@@ -27,6 +25,5 @@ class RandomAgent : public Agent
     RandomAgent();
     int act(uint256_t board) override;
 };
-}  // namespace agent
 
-#endif
+#endif  // AGENT_H

@@ -6,8 +6,6 @@
 #include <string>                            // string
 #include <iostream>
 
-namespace board
-{
 Board::Board()
   : bigint{bitboard::board}
 {
@@ -83,4 +81,3 @@ void Board::clearlines()
 
   bigint |= bitboard::board; 
 }
-}  // namespace board

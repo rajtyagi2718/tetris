@@ -6,9 +6,6 @@
 
 namespace boardtest
 {
-using namespace board;
-using boost::multiprecision::uint256_t;
-
 TEST(BoardTest, Throw)
 {
   Board board{};

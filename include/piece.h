@@ -4,9 +4,8 @@
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <vector>                            // vector
 #include <ostream>                           // ostream
+#include <memory>                            // unique_ptr
 
-namespace piece
-{
 using boost::multiprecision::uint256_t;
 
 class Piece
@@ -21,6 +20,7 @@ class Piece
     void down();
     void left();
     void right();
+    bool top() const;
 
   protected:  
     // abstract class
@@ -75,6 +75,7 @@ class SPiece : public Piece
   public:
     SPiece();
 };
-}  // namespace piece
+
+std::unique_ptr<Piece> spawnpiece();
 
 #endif  // PIECE_H

@@ -2,6 +2,18 @@
 #include <sstream>                 // ostringstream
 #include <string>                  // to_string
 
+SpawnPieceIndexException::SpawnPieceIndexException(int index)
+  : message{"generated spawn index must be integer between [0, 6]."}, 
+    index{index}
+{
+  message += " given index " + std::to_string(index) + '.';
+}
+
+const char* SpawnPieceIndexException::what() const noexcept
+{
+  return message.c_str(); 
+}
+
 BoardIndexException::BoardIndexException(int index)
   : index{index}
 {

@@ -1,29 +1,33 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../include/agent.h"
 #include "../include/board.h"
 #include "../include/piece.h"
+#include <ostream>             // ostream
 #include <memory>              // unique_ptr
 
-namespace game
-{
-using board::Board;
-using piece::Piece;
-
-//template<Element Agent_>
-template<typename Agent_>
+//template<Element TAgent>
+template<typename TAgent>
 class Game
 {
   public:
-    Game(Agent_ agent_, Board board_);
+    Game(TAgent agent, Board board, std::ostream& os);
+    void play();
     
   private:
-    Agent_ agent_;
-    Board board_;
-    //Piece curpiece;
-    //Piece nexpiece;
-};
-}  // namespace game
+    TAgent agent;
+    Board board;
+    std::ostream& os;
+    std::unique_ptr<Piece> curpiece;
+    std::unique_ptr<Piece> nexpiece;
 
-#endif
+    bool terminal;
+    int level;
+
+    void render();
+    void move();
+    bool fall();
+    bool enqueue();  
+};
+
+#endif  // GAME_H
