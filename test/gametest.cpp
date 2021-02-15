@@ -19,6 +19,6 @@ TEST(GameTest, Play)
   RandomAgent randomagent {};
   Board board {};
   Game<RandomAgent> game {randomagent, board, std::cout}; 
-  game.play();
+ //  game.play();
 }
 }  // namespace gametest

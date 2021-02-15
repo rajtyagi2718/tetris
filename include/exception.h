@@ -4,6 +4,17 @@
 #include <stdexcept>  // exception
 #include <string>     // string
 
+class BoardIndexException : public std::exception
+{
+  public:
+    BoardIndexException(int index);
+    const char* what() const noexcept override;
+
+  private:
+    std::string message;
+    int index;
+};
+
 class SpawnPieceIndexException : public std::exception
 {
   public:
@@ -15,10 +26,10 @@ class SpawnPieceIndexException : public std::exception
     int index;
 };
 
-class BoardIndexException : public std::exception
+class GameActionIndexException : public std::exception
 {
   public:
-    BoardIndexException(int index);
+    GameActionIndexException(int index);
     const char* what() const noexcept override;
 
   private:

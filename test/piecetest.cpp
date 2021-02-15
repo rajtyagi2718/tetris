@@ -1,6 +1,6 @@
 #include "../include/piece.h"  // IPiece
 #include <gtest/gtest.h>       // TEST EXPECT_TRUE
-#include <iostream>            // cout
+#include <iostream>            // cout endl
 #include <memory>              // unique_ptr
 
 namespace piecetest

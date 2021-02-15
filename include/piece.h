@@ -13,6 +13,7 @@ class Piece
   public:
     uint256_t getbigint();
     const uint256_t& getbigint() const;
+    int getid() const;
     friend std::ostream& operator<<(std::ostream& os, const Piece& piece); 
     virtual void rotateright();
     virtual void rotateleft();
@@ -24,11 +25,12 @@ class Piece
 
   protected:  
     // abstract class
-    Piece(uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3);  
-    Piece(uint256_t r);  
+    Piece(int id, uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3);  
+    Piece(int id, uint256_t r);  
 
   private:
     int rot;
+    int id;
     std::vector<uint256_t> rotations;
 };
 
@@ -75,6 +77,9 @@ class SPiece : public Piece
   public:
     SPiece();
 };
+
+enum PieceID {ipiece, opiece, tpiece, jpiece, lpiece, zpiece, spiece, 
+              PieceID_END};
 
 std::unique_ptr<Piece> spawnpiece();
 

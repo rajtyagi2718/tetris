@@ -1,3 +1,7 @@
+piece id
+bitboardtest
+piecetest
+
 board
   bitboard
   bitpiece

@@ -12,11 +12,11 @@ namespace bitboard
 {
 const int width = 11;
 
-std::ostream& print(std::ostream& os, const uint256_t& bigint, bool resize)
+std::ostream& print(std::ostream& os, const uint256_t& bigint)
 {
   std::vector<unsigned char> bitvec {};
   boost::multiprecision::export_bits(bigint, std::back_inserter(bitvec), 1);
-  if (resize)
+  if (bitvec.size() > 253)
   {
     bitvec.erase(bitvec.begin(), bitvec.end()-253); 
   }
@@ -24,7 +24,7 @@ std::ostream& print(std::ostream& os, const uint256_t& bigint, bool resize)
   int curwidth = 11;
   for (auto it = bitvec.crbegin(); it != bitvec.crend(); it++)
   {
-    os << bool(*it) << ' ';
+    os << ((*it) ? "o " : "  ");
     if (!(--curwidth))
     {
       os << '\n';

@@ -1,6 +1,5 @@
 #include "../include/board.h"                // Board
 #include "../include/bitboard.h"             // print
-#include "../include/exception.h"            // 
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <ostream>                           // ostream
 #include <string>                            // string
@@ -22,9 +21,10 @@ const uint256_t& Board::getbigint() const
   std::cout << "board const getter" << std::endl;
   return bigint;
 }
+
 std::ostream& operator<<(std::ostream& os, const Board& board)
 {
-  return bitboard::print(os, board.bigint, true);
+  return bitboard::print(os, board.bigint);
 }
 
 bool Board::checkpiece(const uint256_t& piece)

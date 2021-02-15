@@ -1,19 +1,19 @@
 #include "../include/piece.h"                // []Piece
 #include "../include/bitboard.h"             // print width []piece[]
-#include "../include/exception.h"            // SpawnPieceIndexException
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <ostream>                           // ostream
 #include <iostream>
 #include <memory>                            // unique_ptr make_unique
 #include <random>                            // random_device mt19937 uniform_int_distribution
+#include <cassert>                           // assert
 
-Piece::Piece(uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3)  
-  : rot{0}, rotations{r0, r1, r2, r3}
+Piece::Piece(int id, uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3)  
+  : rot{0}, id{id}, rotations{r0, r1, r2, r3}
 {
 }
 
-Piece::Piece(uint256_t r)  
-  : rot{0}, rotations{r}
+Piece::Piece(int id, uint256_t r)  
+  : rot{0}, id{id}, rotations{r}
 {
 }
 
@@ -29,9 +29,14 @@ const uint256_t& Piece::getbigint() const
   return rotations[rot];
 }
 
+int Piece::getid() const
+{
+  return id;
+}
+
 std::ostream& operator<<(std::ostream& os, const Piece& piece)
 {
-  return bitboard::print(os, piece.getbigint(), false);
+  return bitboard::print(os, piece.getbigint());
 }
 
 void Piece::rotateright()
@@ -85,7 +90,8 @@ bool Piece::top() const
 
 
 IPiece::IPiece()
-  : Piece(bitboard::ipiece0, 
+  : Piece(ipiece,
+          bitboard::ipiece0, 
           bitboard::ipiece1, 
           bitboard::ipiece2,
           bitboard::ipiece3)
@@ -94,7 +100,7 @@ IPiece::IPiece()
 
 // rotation invariant
 OPiece::OPiece()
-  : Piece(bitboard::opiece)
+  : Piece(opiece, bitboard::opiece)
 {
 }
 
@@ -107,7 +113,8 @@ void OPiece::rotateleft()
 }
 
 TPiece::TPiece()
-  : Piece(bitboard::tpiece0, 
+  : Piece(tpiece,
+          bitboard::tpiece0, 
           bitboard::tpiece1, 
           bitboard::tpiece2,
           bitboard::tpiece3)
@@ -115,7 +122,8 @@ TPiece::TPiece()
 }
 
 JPiece::JPiece()
-  : Piece(bitboard::jpiece0, 
+  : Piece(jpiece,
+          bitboard::jpiece0, 
           bitboard::jpiece1, 
           bitboard::jpiece2,
           bitboard::jpiece3)
@@ -123,7 +131,8 @@ JPiece::JPiece()
 }
 
 LPiece::LPiece()
-  : Piece(bitboard::lpiece0, 
+  : Piece(lpiece,
+          bitboard::lpiece0, 
           bitboard::lpiece1, 
           bitboard::lpiece2,
           bitboard::lpiece3)
@@ -131,7 +140,8 @@ LPiece::LPiece()
 }
 
 ZPiece::ZPiece()
-  : Piece(bitboard::zpiece0, 
+  : Piece(zpiece,
+          bitboard::zpiece0, 
           bitboard::zpiece1, 
           bitboard::zpiece2,
           bitboard::zpiece3)
@@ -139,7 +149,8 @@ ZPiece::ZPiece()
 }
 
 SPiece::SPiece()
-  : Piece(bitboard::spiece0, 
+  : Piece(spiece,
+          bitboard::spiece0, 
           bitboard::spiece1, 
           bitboard::spiece2,
           bitboard::spiece3)
@@ -151,18 +162,16 @@ std::unique_ptr<Piece> spawnpiece()
   static std::random_device rd; 
   static std::mt19937 gen(rd());
   static std::uniform_int_distribution<> distrib(0, 6);
-  int p = distrib(gen);
-  switch (p)
+  int id = distrib(gen);
+  switch (id)
   {
-    case 0: return std::make_unique<IPiece>();
-    case 1: return std::make_unique<OPiece>();
-    case 2: return std::make_unique<TPiece>();
-    case 3: return std::make_unique<JPiece>();
-    case 4: return std::make_unique<LPiece>();
-    case 5: return std::make_unique<ZPiece>();
-    case 6: return std::make_unique<SPiece>();
+    case ipiece: return std::make_unique<IPiece>();
+    case opiece: return std::make_unique<OPiece>();
+    case tpiece: return std::make_unique<TPiece>();
+    case jpiece: return std::make_unique<JPiece>();
+    case lpiece: return std::make_unique<LPiece>();
+    case zpiece: return std::make_unique<ZPiece>();
+    case spiece: return std::make_unique<SPiece>();
+    default: assert(false && "spawn piece id out of range [0, 6].");
   }
-  
-  SpawnPieceIndexException exc {p};
-  throw exc;
 }

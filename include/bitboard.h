@@ -10,7 +10,7 @@ using boost::multiprecision::uint256_t;
 
 extern const int width;
 
-std::ostream& print(std::ostream& os, const uint256_t& bigint, bool resize);
+std::ostream& print(std::ostream& os, const uint256_t& bigint);
 
 // BOARD
 // 20x10 play field

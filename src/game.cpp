@@ -2,9 +2,10 @@
 #include "../include/agent.h"
 #include "../include/board.h"
 #include "../include/piece.h"
-#include <ostream>             // ostream
-#include <memory>              // make_unique
-#include <utility>             // move
+#include <ostream>                 // ostream
+#include <memory>                  // make_unique
+#include <utility>                 // move
+#include <cassert>                 // assert
 
 template<typename TAgent>
 Game<TAgent>::Game(TAgent agent, Board board, std::ostream& os)
@@ -19,12 +20,12 @@ Game<TAgent>::Game(TAgent agent, Board board, std::ostream& os)
 template<typename TAgent>
 void Game<TAgent>::play()
 {
-  enqueue();
+  board.addpiece(curpiece->getbigint());
   render();
 
   while (!terminal)
   {
-    for (int i = 2-level; i > 0; i--)
+    for (int i = 2; i > 0; i--)
     {
       move(); 
       render();
@@ -40,8 +41,9 @@ void Game<TAgent>::play()
 template<typename TAgent>
 void Game<TAgent>::render()
 {
-  static int counter = 10;
-  os << board;
+  static int counter = -1;
+  os << "render counter: " << counter << '\n';
+  os << board << '\n';
   counter--;
   if (!counter)
   {
@@ -53,29 +55,33 @@ template<typename TAgent>
 void Game<TAgent>::move()
 {
   int action = agent.act(board.getbigint());
+  assert(action < Action_END && "agent action out of range [0, 4]");
+  std::cout << "action " << action << std::endl;
   board.rempiece(curpiece->getbigint()); 
   switch (action)
   {
-    case null: 
-    case rotateright: curpiece->rotateright();    
-    case rotateleft: curpiece->rotateleft();    
-    case left: curpiece->left();    
-    case right: curpiece->right();    
+    case null: break;
+    case rotateright: curpiece->rotateright();  break;
+    case rotateleft:  curpiece->rotateleft();  break;
+    case left:        curpiece->left();  break;
+    case right:       curpiece->right();  break;
   }
 
-  if (! board.trypiece(curpiece->getbigint()))
+  if (!board.trypiece(curpiece->getbigint()))
   {
+    std::cout << "action blocked." << std::endl;
     // undo action
     switch (action)
     {
-      case null: 
-      case rotateright: curpiece->rotateleft();    
-      case rotateleft: curpiece->rotateright();    
-      case left: curpiece->right();    
-      case right: curpiece->left();    
+      case null: break;
+      case rotateright: curpiece->rotateleft();  break;
+      case rotateleft:  curpiece->rotateright();  break;
+      case left:        curpiece->right();  break;
+      case right:       curpiece->left();  break;
     }
     board.addpiece(curpiece->getbigint());
   }
+  else { std::cout << "action success." << std::endl; }
 }
 
 
