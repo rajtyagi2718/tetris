@@ -44,26 +44,9 @@ TEST(BitBoardTest, VecToIntBernoulliTrials)
   }
 }
 
-class PrintBigInts : 
-  public ::testing::TestWithParam<std::tuple<std::string, uint256_t>> 
+TEST(BitBoardTest, PrintBigInts)
 {
-protected:
-  std::string name;
-  uint256_t bigint;
-};
-
-TEST_P(PrintBigInts, Param)
-{
-  std::tie(name, bigint) = GetParam();
-  std::cout << name << std::endl;
-  print(std::cout, bigint);
-  std::cout << std::endl;
-}
-
-INSTANTIATE_TEST_CASE_P(
-  BitBoardTest,
-  PrintBigInts,
-  ::testing::Values(
+  for (auto& [name, bigint] : {
     std::make_tuple("board",   uint256_t {board}),
     std::make_tuple("line",    uint256_t {line}),
     std::make_tuple("ipiece0", uint256_t {ipiece0}),
@@ -90,6 +73,11 @@ INSTANTIATE_TEST_CASE_P(
     std::make_tuple("spiece0", uint256_t {spiece0}),
     std::make_tuple("spiece1", uint256_t {spiece1}),
     std::make_tuple("spiece2", uint256_t {spiece2}),
-    std::make_tuple("spiece3", uint256_t {spiece3})));
-
+    std::make_tuple("spiece3", uint256_t {spiece3})})
+  {
+    std::cout << name << '\n';
+    print(std::cout, bigint);
+    std::cout << std::endl;
+  }
+}
 } // namespace bitboardtest

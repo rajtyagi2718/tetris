@@ -1,6 +1,5 @@
-piece id
-bitboardtest
 piecetest
+piece rotation debugged
 
 board
   bitboard

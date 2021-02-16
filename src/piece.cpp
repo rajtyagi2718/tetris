@@ -34,6 +34,11 @@ int Piece::getid() const
   return id;
 }
 
+unsigned int Piece::getrot() const
+{
+  return rot;
+}
+
 std::ostream& operator<<(std::ostream& os, const Piece& piece)
 {
   return bitboard::print(os, piece.getbigint());
@@ -162,7 +167,11 @@ std::unique_ptr<Piece> spawnpiece()
   static std::random_device rd; 
   static std::mt19937 gen(rd());
   static std::uniform_int_distribution<> distrib(0, 6);
-  int id = distrib(gen);
+  return spawnpieceid(distrib(gen));
+}
+
+std::unique_ptr<Piece> spawnpieceid(int id)
+{
   switch (id)
   {
     case ipiece: return std::make_unique<IPiece>();

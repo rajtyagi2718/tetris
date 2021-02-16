@@ -83,27 +83,35 @@ std::ostream& print(std::ostream& os, uint256_t bigint)
 
 int main()
 {
-  using boost::multiprecision::cpp_int;
-  // Create a cpp_int with just a couple of bits set:
-  uint256_t i;
-  bit_set(i, 2); // set the 5000'th bit
-  bit_set(i, 5);
-  bit_set(i, 6);
-  // print int
-  std::cout << i << std::endl;
-
-  // export into 8-bit unsigned values, most significant bit first:
-  std::vector<unsigned char> v;
-  export_bits(i, std::back_inserter(v), 1);
-  // print vector
-  for (const auto& x: v)
+  unsigned int i = 8;
+  for (int j = 16; j >= 0; j--)
   {
-    std::cout << bool(x) << " ";
+    std::cout << i % 4 << '\t';
+    i--;
   }
   std::cout << std::endl;
 
-  print(std::cout, i);
-  std::cout << std::endl;
+  // using boost::multiprecision::cpp_int;
+  // // Create a cpp_int with just a couple of bits set:
+  // uint256_t i;
+  // bit_set(i, 2); // set the 5000'th bit
+  // bit_set(i, 5);
+  // bit_set(i, 6);
+  // // print int
+  // std::cout << i << std::endl;
+
+  // // export into 8-bit unsigned values, most significant bit first:
+  // std::vector<unsigned char> v;
+  // export_bits(i, std::back_inserter(v), 1);
+  // // print vector
+  // for (const auto& x: v)
+  // {
+  //   std::cout << bool(x) << " ";
+  // }
+  // std::cout << std::endl;
+
+  // print(std::cout, i);
+  // std::cout << std::endl;
 
   // // import back again, and check for equality:
   // cpp_int j;
