@@ -19,13 +19,13 @@ Piece::Piece(int id, uint256_t r)
 
 uint256_t Piece::getbigint()
 {
-  std::cout << "piece getter" << std::endl;
+  //std::cout << "piece getter" << std::endl;
   return rotations[rot];
 }
 
 const uint256_t& Piece::getbigint() const
 {
-  std::cout << "piece const getter" << std::endl;
+  //std::cout << "piece const getter" << std::endl;
   return rotations[rot];
 }
 

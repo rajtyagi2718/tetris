@@ -1,11 +1,13 @@
-#include "../include/piece.h"  // IPiece
-#include <gtest/gtest.h>       // TEST EXPECT_TRUE
-#include <iostream>            // cout endl
-#include <vector>              // vector
-#include <memory>              // unique_ptr make_unique
-#include <random>              // random_device mt19937 uniform_int_distribution
-#include <algorithm>           // generate_n transform shuffle
-#include <iterator>            // back_inserter
+#include "../include/piece.h"     // IPiece
+#include "../include/bitboard.h"  // line
+#include <gtest/gtest.h>          // TEST EXPECT_TRUE
+#include <iostream>               // cout endl
+#include <sstream>                // ostringstream
+#include <vector>                 // vector
+#include <memory>                 // unique_ptr make_unique
+#include <random>                 // random_device mt19937 uniform_int_distribution
+#include <algorithm>              // generate_n transform shuffle reverse
+#include <iterator>               // back_inserter
 
 namespace piecetest
 {
@@ -61,19 +63,22 @@ TEST(PieceTest, PrintLeftRight)
     std::cout << *piece.get() << std::endl;
   }
 }
-
 // TODO test fixture, debug
 
 class PieceTestFixture : public ::testing::Test
 {
 public:
-  PieceTestFixture() : op_distr(0, Operations_END-1), numops_distr(1, numops) {}
+  PieceTestFixture() : gen(rd()), 
+                       op_distr(0, Operations_END-1), numops_distr(maxops, maxops) 
+  {
+  }
 
   int numtests = 1000;
-  int numops = 100;
+  int maxops = 100;
   enum Operations {rotateright, up, left, right, down, rotateleft,
                    Operations_END};      
-  std::mt19937 gen(std::random_device());
+  std::random_device rd;
+  std::mt19937 gen;
   std::uniform_int_distribution<> op_distr;  
   std::uniform_int_distribution<> numops_distr;  
   
@@ -90,38 +95,73 @@ public:
       default: assert(false && "oppiece op out of range [0, 5].");
     }
   }
+
+  int inverse (int op) { return Operations_END-1 - op; }
 };
 
 TEST_F(PieceTestFixture, OperationIdentities)
 {
-  std::vector<int> opsvec;
-  std::vector<int> invopsvec;  // inverse operations
   std::unique_ptr<Piece> startpiece;
-  std::unique_ptr<Piece> piece;
   
   for (int id = 0; id < PieceID_END; id++)
   {
-    startpiece = spawnpieceid(id);
+    std::unique_ptr<Piece> startpiece = spawnpieceid(id);
     for (int test = 0; test < numtests; test++)
     {
-      piece = spawnpieceid(id);
-      opsvec.clear();
-      invopsvec.clear();      
+      std::unique_ptr<Piece> piece = spawnpieceid(id);
+      std::vector<int> opsvec {};
+      std::vector<int> invopsvec {};  // inverse operations
 
-      // fill opsvec with random operations of random length
-      std::generate_n(std::back_inserter(opsvec), numops_distr(gen), 
-                      []() { return op_distr(gen); });
-      // fill invopsvec with inverse operations of those in opsvec
-      std::transform(opsvec.cbegin(), opsvec.cend(), 
-                     std::back_inserter(invopsvec),
-                     [](const int& x) { return Operations_END - x; });
-      // all operations commutative
-      std::shuffle(invopsvec.begin(), invopsvec.end(), gen);
+      std::ostringstream oss {};
+      oss << "test " << test << '\n' << *piece.get();
 
-      for (auto op : opsvec) { operate(op, piece); }
-      for (auto op : invopsvec) { operate(op, piece); }
+      int row = 0;
+      for (int i = 0; i < numops_distr(gen); i++)
+      {
+        int op = op_distr(gen);
+        // piece cannot go up when at top
+        while ((op == 1) && (!row))
+        {
+          op = op_distr(gen);
+        } 
+        int invop = inverse(op);
 
-      ASSERT_EQ(startpiece->getbigint(), piece->getbigint());
+        // check op and invop are actually inverses
+        uint256_t curbigint = piece->getbigint();
+        operate(op, piece);
+        operate(invop, piece);
+        ASSERT_EQ(curbigint, piece->getbigint()) << "bad inverse operation";
+
+        operate(op, piece);
+
+        // undo if piece hits border
+        if (piece->getbigint() & bitboard::board)
+        {
+          operate(invop, piece);
+        }
+        // cache undo if legal operation
+        else
+        {
+          opsvec.push_back(op); 
+          invopsvec.push_back(invop);
+          oss << "\nop " << op << '\n' << *piece.get();
+          if (op == 4) { row++; }
+          else if (op == 1) { row--; }
+        }
+      }
+
+      // unwind stack
+      std::reverse(invopsvec.begin(), invopsvec.end());
+      for (auto invop : invopsvec)
+      { 
+        operate(invop, piece);
+        oss << "\ninvop " << invop << '\n' << *piece.get();
+      }
+
+      oss << "\nexpected:\n" << *startpiece.get()
+          << "\nactual:\n" << *piece.get();
+
+      ASSERT_EQ(startpiece->getbigint(), piece->getbigint()) << oss.str();
     } 
   }
 }

@@ -1,5 +1,7 @@
-piecetest
-piece rotation debugged
+piectest complete
+TODO refactor piecetest to param fixture
+
+class equality
 
 board
   bitboard
@@ -10,6 +12,7 @@ game
     piece
   agent
     search
+
 
 alltests: main.o exception.o exceptiontest.o bitboard.o bitboardtest.o board.o boardtest.o piece.o piecetest.o agent.o agenttest.o game.o gametest.o
 	g++ -std=c++17 main.o ../build/exception.o exceptiontest.o ../build/bitboard.o bitboardtest.o ../build/board.o boardtest.o ../build/piece.o piecetest.o ../build/agent.o agenttest.o ../build/game.o gametest.o -lgtest -lgtest_main -pthread -o alltests

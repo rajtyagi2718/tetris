@@ -10,14 +10,15 @@
 
 using uint256_t = boost::multiprecision::uint256_t;
 
-std::string inttobit(uint64_t bigint)
+template<typename T>
+std::string inttobit(T uint)
 {
   std::ostringstream oss {};
   int width = 12;
-  while (bigint)
+  while (uint)
   {
-    oss << (bigint & 1) ? '1' : '0';
-    bigint >>= 1;
+    oss << (uint & 1) ? '1' : '0';
+    uint >>= 1;
 
     width -= 1;
     if (!width)
@@ -30,9 +31,10 @@ std::string inttobit(uint64_t bigint)
   return oss.str();
 } 
 
-uint64_t bittoint(const std::string& bitstr)
+template<typename T>
+T bittoint(const std::string& bitstr)
 {
-  uint64_t res = 0;
+  T res = 0;
   for (auto itr = bitstr.crbegin(); itr != bitstr.crend(); itr++)
   {
     // last '1' of bitstr = most significant bit of int
@@ -62,10 +64,11 @@ namespace temp
   const uint256_t line = setints({0, 0, 1, 0, 0, 1, 1});
 }
 
-std::ostream& print(std::ostream& os, uint256_t bigint)
+template<typename T>
+std::ostream& print(std::ostream& os, T uint)
 {
   std::vector<unsigned char> bitvec {};
-  export_bits(bigint, std::back_inserter(bitvec), 1);
+  export_bits(uint, std::back_inserter(bitvec), 1);
 
   int curwidth = 11;
   for (const auto& bit : bitvec)
@@ -83,13 +86,26 @@ std::ostream& print(std::ostream& os, uint256_t bigint)
 
 int main()
 {
-  unsigned int i = 8;
-  for (int j = 16; j >= 0; j--)
-  {
-    std::cout << i % 4 << '\t';
-    i--;
-  }
-  std::cout << std::endl;
+  std::vector<int> vec {1, 0, 1};
+  vec.resize(vec.size()-5);
+  std::cout << "vec: ";
+  for (auto x : vec) { std::cout << x << '\t'; }
+
+  // std::string bitstr = "10001111";
+  // uint8_t x = bittoint<uint8_t> (bitstr);
+  // std::cout << inttobit<uint8_t> (x) << std::endl;
+  // x <<= 3;
+  // std::cout << inttobit<uint8_t> (x) << std::endl;
+  // x >>= 3;
+  // std::cout << inttobit<uint8_t> (x) << std::endl;
+
+  // unsigned int i = 8;
+  // for (int j = 16; j >= 0; j--)
+  // {
+  //   std::cout << i % 4 << '\t';
+  //   i--;
+  // }
+  // std::cout << std::endl;
 
   // using boost::multiprecision::cpp_int;
   // // Create a cpp_int with just a couple of bits set:
