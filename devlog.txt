@@ -1,7 +1,4 @@
-piectest complete
-TODO refactor piecetest to param fixture
-
-class equality
+class equality ??
 
 board
   bitboard

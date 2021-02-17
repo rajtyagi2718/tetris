@@ -1,6 +1,7 @@
-#include "../include/bitboard.h" // bitboard
-#include <gtest/gtest.h>         // TEST EXPECT_TRUE
+#include "../include/bitboard.h" // 
+#include <gtest/gtest.h>         // 
 #include <iostream>              // cout endl
+#include <sstream>               // ostringstream
 #include <string>                // string
 #include <vector>                // vector
 #include <tuple>                 // tuple tie
@@ -8,76 +9,91 @@
 
 namespace bitboardtest
 {
-using namespace bitboard;
+using boost::multiprecision::uint256_t;
 
-TEST(BitBoardTest, VecToIntBernoulliTrials)
+class VecToInt : public ::testing::TestWithParam<int>
 {
-  int numtests = 1000;
+protected:
+  VecToInt() : bitvec(256, 0), expected{0}, actual{0}, gen{rd()}, distr{}, msg{}
+  {
+  }
 
-  std::vector<unsigned char> bitvec(256, 0); 
-  uint256_t expected {0};
-  uint256_t actual {0};
+  std::vector<unsigned char> bitvec; 
+  uint256_t expected;
+  uint256_t actual;
 
   std::random_device rd; 
-  std::mt19937 gen(rd());
-  std::bernoulli_distribution distrib {};  // default prob = .5
+  std::mt19937 gen;
+  std::bernoulli_distribution distr;  // default prob = .5
 
-  for (int i = 0; i < numtests; i++)
-  {
-    expected = 0;
-    for (int j = 255; j >= 0; j--)  // bigendian
-    {
-      expected <<= 1;  // multiply by 2
-      if (distrib(gen))
-      {
-        expected += 1;   // add 1
-        bitvec[j] = 1;
-      }
-      else
-      {
-        bitvec[j] = 0;
-      }
-    } 
+  std::ostringstream msg;
+};
 
-    actual = internal::bitvectouint256(bitvec);
-    ASSERT_EQ(actual, expected);
-  }
-}
-
-TEST(BitBoardTest, PrintBigInts)
+TEST_P(VecToInt, BernoulliTrials)
 {
-  for (auto& [name, bigint] : {
-    std::make_tuple("board",   uint256_t {board}),
-    std::make_tuple("line",    uint256_t {line}),
-    std::make_tuple("ipiece0", uint256_t {ipiece0}),
-    std::make_tuple("ipiece1", uint256_t {ipiece1}),
-    std::make_tuple("ipiece2", uint256_t {ipiece2}),
-    std::make_tuple("ipiece3", uint256_t {ipiece3}),
-    std::make_tuple("opiece",  uint256_t {opiece}),
-    std::make_tuple("tpiece0", uint256_t {tpiece0}),
-    std::make_tuple("tpiece1", uint256_t {tpiece1}),
-    std::make_tuple("tpiece2", uint256_t {tpiece2}),
-    std::make_tuple("tpiece3", uint256_t {tpiece3}),
-    std::make_tuple("jpiece0", uint256_t {jpiece0}),
-    std::make_tuple("jpiece1", uint256_t {jpiece1}),
-    std::make_tuple("jpiece2", uint256_t {jpiece2}),
-    std::make_tuple("jpiece3", uint256_t {jpiece3}),
-    std::make_tuple("lpiece0", uint256_t {lpiece0}),
-    std::make_tuple("lpiece1", uint256_t {lpiece1}),
-    std::make_tuple("lpiece2", uint256_t {lpiece2}),
-    std::make_tuple("lpiece3", uint256_t {lpiece3}),
-    std::make_tuple("zpiece0", uint256_t {zpiece0}),
-    std::make_tuple("zpiece1", uint256_t {zpiece1}),
-    std::make_tuple("zpiece2", uint256_t {zpiece2}),
-    std::make_tuple("zpiece3", uint256_t {zpiece3}),
-    std::make_tuple("spiece0", uint256_t {spiece0}),
-    std::make_tuple("spiece1", uint256_t {spiece1}),
-    std::make_tuple("spiece2", uint256_t {spiece2}),
-    std::make_tuple("spiece3", uint256_t {spiece3})})
+  // randomly set bits, track expected bigint
+  for (int j = 255; j >= 0; j--)  // bigendian
   {
-    std::cout << name << '\n';
-    print(std::cout, bigint);
-    std::cout << std::endl;
-  }
+    expected <<= 1;   // multiply by 2
+    if (distr(gen))
+    {
+      expected += 1;  // add 1
+      bitvec[j] = 1;
+    }
+  } 
+
+  // build error message
+  for (auto x : bitvec) { msg << x; }
+
+  actual = bitboard::internal::bitvectouint256(bitvec);
+  ASSERT_EQ(expected, actual) << msg.str();
 }
+
+INSTANTIATE_TEST_CASE_P(BitBoardTest, VecToInt, 
+                        ::testing::Range(0, 1000));
+
+class Print : public 
+  ::testing::TestWithParam<std::tuple<std::string, uint256_t>>
+{
+protected:
+  Print() { std::tie(name, bigint) = GetParam(); }
+  std::string name;
+  uint256_t bigint;
+};
+
+TEST_P(Print, BigInts)
+{
+  std::cout << name << '\n';
+  bitboard::print(std::cout, bigint);
+  std::cout << std::endl;
+}
+
+INSTANTIATE_TEST_CASE_P(BitBoardTest, Print, ::testing::Values(
+    std::make_tuple("board",   uint256_t {bitboard::board}),
+    std::make_tuple("line",    uint256_t {bitboard::line}),
+    std::make_tuple("ipiece0", uint256_t {bitboard::ipiece0}),
+    std::make_tuple("ipiece1", uint256_t {bitboard::ipiece1}),
+    std::make_tuple("ipiece2", uint256_t {bitboard::ipiece2}),
+    std::make_tuple("ipiece3", uint256_t {bitboard::ipiece3}),
+    std::make_tuple("opiece",  uint256_t {bitboard::opiece}),
+    std::make_tuple("tpiece0", uint256_t {bitboard::tpiece0}),
+    std::make_tuple("tpiece1", uint256_t {bitboard::tpiece1}),
+    std::make_tuple("tpiece2", uint256_t {bitboard::tpiece2}),
+    std::make_tuple("tpiece3", uint256_t {bitboard::tpiece3}),
+    std::make_tuple("jpiece0", uint256_t {bitboard::jpiece0}),
+    std::make_tuple("jpiece1", uint256_t {bitboard::jpiece1}),
+    std::make_tuple("jpiece2", uint256_t {bitboard::jpiece2}),
+    std::make_tuple("jpiece3", uint256_t {bitboard::jpiece3}),
+    std::make_tuple("lpiece0", uint256_t {bitboard::lpiece0}),
+    std::make_tuple("lpiece1", uint256_t {bitboard::lpiece1}),
+    std::make_tuple("lpiece2", uint256_t {bitboard::lpiece2}),
+    std::make_tuple("lpiece3", uint256_t {bitboard::lpiece3}),
+    std::make_tuple("zpiece0", uint256_t {bitboard::zpiece0}),
+    std::make_tuple("zpiece1", uint256_t {bitboard::zpiece1}),
+    std::make_tuple("zpiece2", uint256_t {bitboard::zpiece2}),
+    std::make_tuple("zpiece3", uint256_t {bitboard::zpiece3}),
+    std::make_tuple("spiece0", uint256_t {bitboard::spiece0}),
+    std::make_tuple("spiece1", uint256_t {bitboard::spiece1}),
+    std::make_tuple("spiece2", uint256_t {bitboard::spiece2}),
+    std::make_tuple("spiece3", uint256_t {bitboard::spiece3})));
 } // namespace bitboardtest

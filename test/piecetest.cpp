@@ -9,6 +9,8 @@
 #include <algorithm>              // generate_n transform shuffle reverse
 #include <iterator>               // back_inserter
 
+// TODO decouple ASSERT_EQ, instantiate param
+
 namespace piecetest
 {
 TEST(PieceTest, PrintRotateRightLeft)

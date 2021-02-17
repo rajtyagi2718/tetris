@@ -9,6 +9,7 @@ namespace bitboard
 using boost::multiprecision::uint256_t;
 
 extern const int width;
+extern const int length;
 
 std::ostream& print(std::ostream& os, const uint256_t& bigint);
 

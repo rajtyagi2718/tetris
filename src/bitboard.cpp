@@ -1,6 +1,5 @@
-#include "../include/bitboard.h"             // bitboard
-#include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <boost/range/adaptor/reversed.hpp>  // reverse
+#include "../include/bitboard.h"             // 
+#include <boost/multiprecision/cpp_int.hpp>  // uint256_t export_bits import_bits
 #include <ostream>                           // ostream 
 #include <string>                            // string
 #include <vector>                            // vector
@@ -10,7 +9,8 @@
 
 namespace bitboard
 {
-const int width = 11;
+const int width  = 11;
+const int length = 23;
 
 std::ostream& print(std::ostream& os, const uint256_t& bigint)
 {
@@ -20,10 +20,6 @@ std::ostream& print(std::ostream& os, const uint256_t& bigint)
   {
     bitvec.erase(bitvec.end()-3, bitvec.end());
   }
-  // if (bitvec.size() > 253)
-  // {
-  //   // bitvec.erase(bitvec.begin(), bitvec.end()-253); 
-  // }
 
   int curwidth = 11;
   for (auto it = bitvec.crbegin(); it != bitvec.crend(); it++)
