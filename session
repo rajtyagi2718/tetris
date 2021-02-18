@@ -69,7 +69,7 @@ badd +1 include/agent.h
 badd +1 test/agenttest.cpp
 argglobal
 silent! argdel *
-$argadd ~/projects/tetris/
+$argadd ~/projects/tetris
 set stal=2
 edit test/main.cpp
 set splitbelow splitright
@@ -334,7 +334,7 @@ normal! 04|
 lcd ~/projects/tetris
 wincmd w
 argglobal
-if bufexists('~/projects/tetris') | buffer ~/projects/tetris | else | edit ~/projects/tetris | endif
+enew
 let s:cpo_save=&cpo
 set cpo&vim
 nmap <buffer>  <Plug>NetrwHideEdit
@@ -444,7 +444,7 @@ setlocal synmaxcol=3000
 if &syntax != 'netrw'
 setlocal syntax=netrw
 endif
-setlocal tabstop=33
+setlocal tabstop=2
 setlocal tagcase=
 setlocal tags=
 setlocal termkey=
@@ -457,13 +457,6 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal nowrap
 setlocal wrapmargin=0
-silent! normal! zE
-let s:l = 14 - ((13 * winheight(0) + 21) / 43)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-14
-normal! 0
 lcd ~/projects/tetris
 wincmd w
 3wincmd w
@@ -608,7 +601,7 @@ if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 43
-normal! 03|
+normal! 0
 lcd ~/projects/tetris
 wincmd w
 argglobal
@@ -1778,7 +1771,7 @@ if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 79
-normal! 023|
+normal! 0
 lcd ~/projects/tetris
 wincmd w
 argglobal
@@ -3075,10 +3068,10 @@ let s:cpo_save=&cpo
 set cpo&vim
 nmap <buffer>  <Plug>NetrwHideEdit
 nmap <buffer>  <Plug>NetrwRefresh
-nnoremap <buffer> <silent> <S-Down> :Nexplore
-nnoremap <buffer> <silent> <S-Up> :Pexplore
-nmap <buffer> <nowait> <silent> <S-CR> <Plug>NetrwTreeSqueeze
 nnoremap <buffer> <F1> :he netrw-quickhelp
+nmap <buffer> <nowait> <silent> <S-CR> <Plug>NetrwTreeSqueeze
+nnoremap <buffer> <silent> <S-Up> :Pexplore
+nnoremap <buffer> <silent> <S-Down> :Nexplore
 let &cpo=s:cpo_save
 unlet s:cpo_save
 setlocal keymap=

@@ -11,8 +11,10 @@ namespace boardtest
 using boost::multiprecision::uint256_t;
 using bitboard::width;
 using bitboard::length;
+using ::testing::TestWithParam;
+using ::testing::Range;
 
-class ClearLines : public ::testing::TestWithParam<int>
+class ClearLines : public TestWithParam<int>
 {
 protected:
   ClearLines() : board_actual{}, board_expected{}, 
@@ -22,7 +24,8 @@ protected:
   {
     // last line in field of play 
     line_actual  <<= width * (length-2);
-    // first three bits are out of range in bitboard
+    // bottom right bit in field of play
+    // first three bits are out of range
     bit_expected <<= 3 + (width * (length-1)) - 1;
     bit_actual   <<= 3 + (width * (length-1)) - 1;
   }
@@ -38,7 +41,6 @@ protected:
   uint256_t line_actual;
   uint256_t bit_expected;
   uint256_t bit_actual;
-
   std::ostringstream msg;
 };
 
@@ -77,5 +79,5 @@ TEST_P(ClearLines, BernoulliTrials)
   ASSERT_EQ(board_expected.getbigint(), board_actual.getbigint()) << msg.str();
 }
 
-INSTANTIATE_TEST_CASE_P(BoardTest, ClearLines, ::testing::Range(0, 1000));
+INSTANTIATE_TEST_CASE_P(BoardTest, ClearLines, Range(0, 1000));
 }  // namespace boardtest

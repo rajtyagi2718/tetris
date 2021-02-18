@@ -10,23 +10,24 @@
 namespace bitboardtest
 {
 using boost::multiprecision::uint256_t;
+using ::testing::TestWithParam;
+using ::testing::Range;
+using ::testing::Values;
 
-class VecToInt : public ::testing::TestWithParam<int>
+class VecToInt : public TestWithParam<int>
 {
 protected:
-  VecToInt() : bitvec(256, 0), expected{0}, actual{0}, gen{rd()}, distr{}, msg{}
-  {
-  }
+  VecToInt() : 
+    bitvec(256, 0), expected{0}, actual{0}, msg{}, gen{rd()}, distr{} {}
 
   std::vector<unsigned char> bitvec; 
   uint256_t expected;
   uint256_t actual;
+  std::ostringstream msg;
 
   std::random_device rd; 
   std::mt19937 gen;
   std::bernoulli_distribution distr;  // default prob = .5
-
-  std::ostringstream msg;
 };
 
 TEST_P(VecToInt, BernoulliTrials)
@@ -49,11 +50,9 @@ TEST_P(VecToInt, BernoulliTrials)
   ASSERT_EQ(expected, actual) << msg.str();
 }
 
-INSTANTIATE_TEST_CASE_P(BitBoardTest, VecToInt, 
-                        ::testing::Range(0, 1000));
+INSTANTIATE_TEST_CASE_P(BitBoardTest, VecToInt, Range(0, 1000));
 
-class Print : public 
-  ::testing::TestWithParam<std::tuple<std::string, uint256_t>>
+class Print : public TestWithParam<std::tuple<std::string, uint256_t>>
 {
 protected:
   Print() { std::tie(name, bigint) = GetParam(); }
@@ -68,7 +67,7 @@ TEST_P(Print, BigInts)
   std::cout << std::endl;
 }
 
-INSTANTIATE_TEST_CASE_P(BitBoardTest, Print, ::testing::Values(
+INSTANTIATE_TEST_CASE_P(BitBoardTest, Print, Values(
     std::make_tuple("board",   uint256_t {bitboard::board}),
     std::make_tuple("line",    uint256_t {bitboard::line}),
     std::make_tuple("ipiece0", uint256_t {bitboard::ipiece0}),

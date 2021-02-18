@@ -1,5 +1,7 @@
 class equality ??
 
+piecetest: param
+
 board
   bitboard
   bitpiece

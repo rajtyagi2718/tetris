@@ -1,90 +1,36 @@
-#include "../include/piece.h"     // IPiece
-#include "../include/bitboard.h"  // line
-#include <gtest/gtest.h>          // TEST EXPECT_TRUE
+#include "../include/piece.h"     // 
+#include "../include/bitboard.h"  //
+#include <gtest/gtest.h>          //
 #include <iostream>               // cout endl
 #include <sstream>                // ostringstream
 #include <vector>                 // vector
+#include <tuple>                  // tuple get tie
 #include <memory>                 // unique_ptr make_unique
 #include <random>                 // random_device mt19937 uniform_int_distribution
-#include <algorithm>              // generate_n transform shuffle reverse
-#include <iterator>               // back_inserter
-
-// TODO decouple ASSERT_EQ, instantiate param
 
 namespace piecetest
 {
-TEST(PieceTest, PrintRotateRightLeft)
-{
-  std::unique_ptr<Piece> piece = spawnpiece();
-  std::cout << *piece.get() << std::endl;
-  for (int i = 0; i < 4; i++)
-  {
-    piece->rotateright();
-    std::cout << *piece.get() << std::endl;
-  }
-  for (int i = 0; i < 4; i++)
-  {
-    piece->rotateleft();
-    std::cout << *piece.get() << std::endl;
-  }
-}
+using boost::multiprecision::uint256_t;
+using ::testing::TestWithParam;
+using ::testing::Range;
+using ::testing::Values;
+using ::testing::Combine;
 
-TEST(PieceTest, PrintDownUp)
+enum Operation {rotateright, up, left, right, down, rotateleft, Operation_END};      
+class OperationBase
 {
-  std::unique_ptr<Piece> piece = spawnpiece();
-  std::cout << *piece.get() << std::endl;
-  for (int i = 0; i < 20; i++)
-  {
-    piece->down();
-    std::cout << *piece.get() << std::endl;
-  }
-  for (int i = 0; i < 20; i++)
-  {
-    piece->up();
-    std::cout << *piece.get() << std::endl;
-  }
-}
+protected:
+  OperationBase(int id)
+    : piece{spawnpieceid(id)},
+      startint{piece->getbigint()},
+      msg{}
+  {}
 
-TEST(PieceTest, PrintLeftRight)
-{
-  std::unique_ptr<Piece> piece = spawnpiece();
-  std::cout << *piece.get() << std::endl;
-  for (int i = 0; i < 4; i++)
-  {
-    piece->left();
-    std::cout << *piece.get() << std::endl;
-  }
-  for (int i = 0; i < 8; i++)
-  {
-    piece->right();
-    std::cout << *piece.get() << std::endl;
-  }
-  for (int i = 0; i < 4; i++)
-  {
-    piece->left();
-    std::cout << *piece.get() << std::endl;
-  }
-}
-// TODO test fixture, debug
+  std::unique_ptr<Piece> piece;
+  uint256_t startint;
+  std::ostringstream msg;
 
-class PieceTestFixture : public ::testing::Test
-{
-public:
-  PieceTestFixture() : gen(rd()), 
-                       op_distr(0, Operations_END-1), numops_distr(maxops, maxops) 
-  {
-  }
-
-  int numtests = 1000;
-  int maxops = 100;
-  enum Operations {rotateright, up, left, right, down, rotateleft,
-                   Operations_END};      
-  std::random_device rd;
-  std::mt19937 gen;
-  std::uniform_int_distribution<> op_distr;  
-  std::uniform_int_distribution<> numops_distr;  
-  
-  void operate (int op, const std::unique_ptr<Piece>& piece)
+  void operate (int op)
   {
     switch (op)
     {
@@ -94,77 +40,128 @@ public:
       case right:       piece->right();        break;
       case down:        piece->down();         break;
       case rotateleft:  piece->rotateleft();   break;
-      default: assert(false && "oppiece op out of range [0, 5].");
+      default: assert(false && "operation out of range [0, 5].");
     }
   }
 
-  int inverse (int op) { return Operations_END-1 - op; }
+  void invert (int op)
+  {
+    operate(Operation_END-1 - op);
+  }
 };
 
-TEST_F(PieceTestFixture, OperationIdentities)
+class OperationPrint
+  : public TestWithParam<std::tuple<int, std::tuple<int, int>>>,
+    public OperationBase
 {
-  std::unique_ptr<Piece> startpiece;
-  
-  for (int id = 0; id < PieceID_END; id++)
-  {
-    std::unique_ptr<Piece> startpiece = spawnpieceid(id);
-    for (int test = 0; test < numtests; test++)
-    {
-      std::unique_ptr<Piece> piece = spawnpieceid(id);
-      std::vector<int> opsvec {};
-      std::vector<int> invopsvec {};  // inverse operations
-
-      std::ostringstream oss {};
-      oss << "test " << test << '\n' << *piece.get();
-
-      int row = 0;
-      for (int i = 0; i < numops_distr(gen); i++)
-      {
-        int op = op_distr(gen);
-        // piece cannot go up when at top
-        while ((op == 1) && (!row))
-        {
-          op = op_distr(gen);
-        } 
-        int invop = inverse(op);
-
-        // check op and invop are actually inverses
-        uint256_t curbigint = piece->getbigint();
-        operate(op, piece);
-        operate(invop, piece);
-        ASSERT_EQ(curbigint, piece->getbigint()) << "bad inverse operation";
-
-        operate(op, piece);
-
-        // undo if piece hits border
-        if (piece->getbigint() & bitboard::board)
-        {
-          operate(invop, piece);
-        }
-        // cache undo if legal operation
-        else
-        {
-          opsvec.push_back(op); 
-          invopsvec.push_back(invop);
-          oss << "\nop " << op << '\n' << *piece.get();
-          if (op == 4) { row++; }
-          else if (op == 1) { row--; }
-        }
-      }
-
-      // unwind stack
-      std::reverse(invopsvec.begin(), invopsvec.end());
-      for (auto invop : invopsvec)
-      { 
-        operate(invop, piece);
-        oss << "\ninvop " << invop << '\n' << *piece.get();
-      }
-
-      oss << "\nexpected:\n" << *startpiece.get()
-          << "\nactual:\n" << *piece.get();
-
-      ASSERT_EQ(startpiece->getbigint(), piece->getbigint()) << oss.str();
-    } 
+protected:
+  OperationPrint()
+    : OperationBase{std::get<0>(GetParam())} 
+  { 
+    std::tie(operation, operatenum) = std::get<1>(GetParam());
   }
+ 
+  int operation; 
+  int operatenum; 
+};
+
+TEST_P(OperationPrint, Identity)
+{
+  msg << *piece.get();
+  for (int i = 0; i < operatenum; i++)
+  {
+    operate(operation);
+    msg << '\n' << *piece.get();
+  }
+  for (int i = 0; i < operatenum; i++)
+  {
+    invert(operation);
+    msg << '\n' << *piece.get();
+  }
+  ASSERT_EQ(startint, piece->getbigint()) << msg.str();
+  std::cout << msg.str() << std::endl;
 }
+
+INSTANTIATE_TEST_CASE_P(PieceTest, OperationPrint, 
+  Combine(Range(0, 7),
+          Values(std::make_tuple<int, int>(rotateright, 4),
+                 std::make_tuple<int, int>(rotateleft,  4),
+                 std::make_tuple<int, int>(down,       20),
+                 std::make_tuple<int, int>(left,        4),
+                 std::make_tuple<int, int>(right,       3))));
+
+class OperationStack
+  : public TestWithParam<std::tuple<int, int>>,
+    public OperationBase
+{
+protected:
+  OperationStack()
+    : OperationBase{std::get<0>(GetParam())},
+      operations{},
+      gen(rd()), 
+      operation_distr(0, Operation_END-1), 
+      stacksize_distr(10, 100)
+  {}
+
+  std::vector<int> operations; 
+  std::random_device rd;
+  std::mt19937 gen;
+  std::uniform_int_distribution<> operation_distr;  
+  std::uniform_int_distribution<> stacksize_distr;  
+};
+
+TEST_P(OperationStack, Identities)
+{
+  // build stack
+  int row = 0;
+  for (int i = 0; i < stacksize_distr(gen); i++)
+  {
+    int op;
+    // piece cannot go up when at top
+    do
+    {
+      op = operation_distr(gen);
+    } 
+    while ((op == up) && (!row));
+
+    // check identity: operate + invert
+    uint256_t bigint = piece->getbigint();
+    operate(op);
+    invert(op);
+    ASSERT_EQ(bigint, piece->getbigint()) << "bad inverse operation " << op;
+
+    operate(op);
+
+    // undo if piece hits border
+    if (piece->getbigint() & bitboard::board)
+    {
+      invert(op);
+    }
+    // cache operation if legal
+    else
+    {
+      msg << "\noperation " << op;
+      operations.push_back(op);
+      msg << '\n' << *piece.get();
+      if (op == down) { row++; }
+      else if (op == up) { row--; }
+    }
+  }
+
+  // unwind stack
+  for (auto it = operations.crbegin(); it != operations.crend(); it++)
+  { 
+    msg << "\ninverse of " << *it;
+    invert(*it);
+    msg << '\n' << *piece.get();
+  }
+
+  msg << "\nexpected\n";
+  bitboard::print(msg, startint);
+  msg << "\nactual\n" << *piece.get();
+  ASSERT_EQ(startint, piece->getbigint()) << msg.str();
+}
+
+INSTANTIATE_TEST_CASE_P(PieceTest, OperationStack, 
+                        Combine(Range(0, 7), Range(0, 100)));
 }  // namespace piecetest
