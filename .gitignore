@@ -7,5 +7,5 @@ session
 # temp files
 temp.cpp
 temp.h
-./temp
+temp
 devlog.txt
