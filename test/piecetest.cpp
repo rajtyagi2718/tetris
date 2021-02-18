@@ -16,7 +16,7 @@ using ::testing::Range;
 using ::testing::Values;
 using ::testing::Combine;
 
-enum Operation {rotateright, up, left, right, down, rotateleft, Operation_END};      
+enum Operation {rotateleft, left, up, down, right, rotateright, Operation_END};      
 class OperationBase
 {
 protected:

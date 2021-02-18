@@ -3,15 +3,14 @@
 #include "../include/board.h"
 #include "../include/piece.h"
 #include <ostream>                 // ostream
-#include <memory>                  // make_unique
 #include <utility>                 // move
 #include <cassert>                 // assert
 
 template<typename TAgent>
 Game<TAgent>::Game(TAgent agent, Board board, std::ostream& os)
   : agent{agent}, board{board}, os{os}, 
-    curpiece{spawnpiece()}, nexpiece{spawnpiece()}, 
-    terminal{false}, level{0}
+    curpiece{}, nexpiece{spawnpiece()}, 
+    terminal{false}, level{0}, lines{0}
 {
 }
 
@@ -20,7 +19,10 @@ Game<TAgent>::Game(TAgent agent, Board board, std::ostream& os)
 template<typename TAgent>
 void Game<TAgent>::play()
 {
-  board.addpiece(curpiece->getbigint());
+  if (!enqueue())
+  {
+    terminal = true;
+  }
   render();
 
   while (!terminal)
@@ -30,22 +32,27 @@ void Game<TAgent>::play()
       move(); 
       render();
     }
-    if (!fall() && !enqueue())
+    if (!fall())
     {
-      terminal = true;
+      lines += board.clearlines();
+      if (!enqueue())
+      {
+        terminal = true;
+      }
     }
     render(); 
   }
+  if (lines) { std::cout << "lines: " << lines << std::endl; }
 }
 
 template<typename TAgent>
 void Game<TAgent>::render()
 {
-  static int counter = -1;
-  os << "render counter: " << counter << '\n';
+  static int count = -1;
+  os << "render: " << count << '\n';
   os << board << '\n';
-  counter--;
-  if (!counter)
+  count--;
+  if (!count)
   {
     terminal = true;
   }
@@ -56,34 +63,35 @@ void Game<TAgent>::move()
 {
   int action = agent.act(board.getbigint());
   assert(action < Action_END && "agent action out of range [0, 4]");
-  std::cout << "action " << action << std::endl;
   board.rempiece(curpiece->getbigint()); 
-  switch (action)
-  {
-    case null: break;
-    case rotateright: curpiece->rotateright();  break;
-    case rotateleft:  curpiece->rotateleft();  break;
-    case left:        curpiece->left();  break;
-    case right:       curpiece->right();  break;
-  }
+  forward(action);
 
   if (!board.trypiece(curpiece->getbigint()))
   {
-    std::cout << "action blocked." << std::endl;
-    // undo action
-    switch (action)
-    {
-      case null: break;
-      case rotateright: curpiece->rotateleft();  break;
-      case rotateleft:  curpiece->rotateright();  break;
-      case left:        curpiece->right();  break;
-      case right:       curpiece->left();  break;
-    }
+    backward(action);
     board.addpiece(curpiece->getbigint());
   }
-  else { std::cout << "action success." << std::endl; }
+  else { os << "action " << action << '\n'; }
 }
 
+template<typename TAgent>
+void Game<TAgent>::forward(int action)
+{
+  switch (action)
+  {
+    case rotateleft:  curpiece->rotateleft();   break;
+    case left:        curpiece->left();         break;
+    case null:                                  break;
+    case right:       curpiece->right();        break;
+    case rotateright: curpiece->rotateright();  break;
+  }
+}
+
+template<typename TAgent>
+void Game<TAgent>::backward(int action)
+{
+  forward(Action_END-1 - action); 
+}
 
 template<typename TAgent>
 bool Game<TAgent>::fall()
@@ -103,11 +111,10 @@ bool Game<TAgent>::fall()
 template<typename TAgent>
 bool Game<TAgent>::enqueue()
 {
-  if (!curpiece->top())
+  curpiece = std::move(nexpiece); 
+  if (board.trypiece(curpiece->getbigint()))
   {
-    curpiece = std::move(nexpiece); 
     nexpiece = spawnpiece();
-    board.addpiece(curpiece->getbigint());
     return true;
   }
   return false; 

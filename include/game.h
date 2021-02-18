@@ -23,9 +23,12 @@ class Game
 
     bool terminal;
     int level;
+    int lines;
 
     void render();
     void move();
+    void forward(int action);
+    void backward(int action);
     bool fall();
     bool enqueue();  
 };

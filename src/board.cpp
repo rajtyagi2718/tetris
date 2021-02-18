@@ -53,8 +53,9 @@ void Board::rempiece(const uint256_t& piece)
   bigint &= ~piece;
 }
 
-void Board::clearlines()
+int Board::clearlines()
 {
+  int count = 0;
   // TODO fast check any lines full
   // TODO only check lines within piece range 
   int  width = bitboard::width;
@@ -65,6 +66,7 @@ void Board::clearlines()
   {
     // remove top line from board
     bigint &= ~line;
+    count++;
   }
 
   uint256_t upper{bitboard::line};
@@ -79,12 +81,14 @@ void Board::clearlines()
     {
       // above board shifted down union below board
       bigint = ((bigint & upper) << width) | (bigint & ~line & ~upper);
+      count++;
     }
     upper |= line;
     line <<= width;
   }
 
   bigint |= bitboard::board; 
+  return count;
 }
 
 /*

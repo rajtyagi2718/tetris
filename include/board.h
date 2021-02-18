@@ -17,7 +17,7 @@ class Board
     void addpiece(const uint256_t& piece);  
     bool trypiece(const uint256_t& piece);  
     void rempiece(const uint256_t& piece);  
-    void clearlines();
+    int clearlines();
 
   private:
     uint256_t bigint;

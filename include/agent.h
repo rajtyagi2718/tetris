@@ -7,7 +7,7 @@
 
 using boost::multiprecision::uint256_t;
 
-enum Action {null, rotateright, rotateleft, left, right, Action_END};
+enum Action {rotateleft, left, null, right, rotateright, Action_END};
 
 class Agent
 {

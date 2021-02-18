@@ -3,24 +3,12 @@
 
 namespace agenttest
 {
-TEST(AgentTest, Throw)
+TEST(AgentTest, Act)
 {
   RandomAgent ra{};
-  std::cout << "random agent actions\t";
   for (int i = 0; i < 10; i++)
   {
-     std::cout << ra.act(0) << ' ';
+    ra.act(0);
   }
-  std::cout << std::endl;
-
-  RandomAgent rb{};
-  std::cout << "random agent actions\t";
-  for (int i = 0; i < 10; i++)
-  {
-     std::cout << rb.act(0) << ' ';
-  }
-  std::cout << std::endl;
-
-  EXPECT_TRUE(true);
 }
 }  // namespace agenttest
