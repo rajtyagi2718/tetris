@@ -1,11 +1,15 @@
-# vim swap 
+# vim
 *.swp
-
-# vim session
 session
 
-# temp files
+# test builds
+test/*.o
+test/alltests
+
+# temps
 temp.cpp
 temp.h
 temp
+
+# logs
 devlog.txt
