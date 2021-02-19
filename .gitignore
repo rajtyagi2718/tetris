@@ -6,9 +6,10 @@ session
 test/*.o
 test/alltests
 
-# temps
+# temporary file
 temp.cpp
 temp.h
+temp.o
 temp
 
 # logs
