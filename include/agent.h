@@ -11,12 +11,12 @@ enum Action {rotateleft, left, null, right, rotateright, Action_END};
 
 class Agent
 {
-  public:
-    Agent(std::string);
-    virtual int act(uint256_t board) = 0;  // abstract class
-  
-  private:
-    std::string name; 
+public:
+  Agent(std::string);
+  virtual int act(uint256_t board) = 0;  // abstract class
+
+private:
+  std::string name; 
 };
 
 class RandomAgent : public Agent

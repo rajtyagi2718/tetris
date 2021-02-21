@@ -1,64 +1,57 @@
+#include "../include/graphics.h"  // Bitmap
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class Bitmap : public sf::Drawable, public sf::Transformable
+Bitmap::Bitmap(sf::Vector2i tile, int width, int height)
+  : tile{tile}, width{width}, height{height}, 
+    vertices(sf::Quads, width*height*4)
 {
-public:
-  Bitmap(sf::Vector2u tileSize, unsigned int width, unsigned int height)
-  : tileSize{tileSize}, width{width}, height{height}, m_vertices(sf::Quads, width*height*4)
-  {}
-
-  bool load(const std::vector<int>& bitvec)
+  // set quad position, color black
+  for (int i = 0; i < width; ++i)
   {
-  // resize the vertex array to fit the bitvec size
-  // TODO in constructor
-
-  // populate the vertex array, with one quad per tile
-  for (unsigned int i = 0; i < width; ++i)
-    for (unsigned int j = 0; j < height; ++j)
+    for (int j = 0; j < height; ++j)
     {
-    // get a pointer to the current tile's quad
-    sf::Vertex* quad = &m_vertices[(i + j * width) * 4];
+      sf::Vertex* quad = &vertices[(i + j * width) * 4];
 
-    // define its 4 corners
-    quad[0].position = sf::Vector2f(i * tileSize.x, j * tileSize.y);
-        quad[1].position = sf::Vector2f((i+1) * tileSize.x, j * tileSize.y);
-        quad[2].position = sf::Vector2f((i+1) * tileSize.x, (j+1) * tileSize.y);
-        quad[3].position = sf::Vector2f(i * tileSize.x, (j+1) * tileSize.y);
+      quad[0].position = sf::Vector2f(i * tile.x, j * tile.y);
+      quad[1].position = sf::Vector2f((i+1) * tile.x, j * tile.y);
+      quad[2].position = sf::Vector2f((i+1) * tile.x, (j+1) * tile.y);
+      quad[3].position = sf::Vector2f(i * tile.x, (j+1) * tile.y);
 
-        // define its 4 colors
-        sf::Color color {bitvec[i + j*width] ? sf::Color::Black : sf::Color::White};
-        for (int i = 0; i < 4; i++)
-        {
-          quad[i].color = color;
-        }
+      for (int k = 0; k < 4; k++)
+      {
+        quad[k].color = sf::Color::Black;
       }
-
-    return true;
+    }
   }
+}
 
-private:
-
-  // TODO rm states, transform, only drawable
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Bitmap::load(const std::vector<unsigned char>& bitvec)
+{
+  for (int i = 0; i < width; ++i)
   {
-    // apply the transform
-    states.transform *= getTransform();
+    for (int j = 0; j < height; ++j)
+    {
+      sf::Vertex* quad = &vertices[(i + j*width) * 4];
 
-    // draw the vertex array
-    target.draw(m_vertices, states);
+      // bitvec reversed
+      sf::Color color {bitvec[width*height-1 - (i + j*width)] ? sf::Color::White : sf::Color::Black};
+      for (int k = 0; k < 4; k++)
+      {
+        quad[k].color = color;
+      }
+    }
   }
+}
 
-  sf::Vector2u tileSize;
-  unsigned int width;
-  unsigned int height;
-  sf::VertexArray m_vertices;
-};
-
+void Bitmap::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+  target.draw(vertices, states);
+}
+/*
 int main()
 {
-  // create the window
-  sf::RenderWindow window(sf::VideoMode(352, 736), "tetris");
+  sf::RenderWindow window{sf::VideoMode(352, 736), "tetris"};
 
   const std::vector<int> bitvec
   {
@@ -87,14 +80,11 @@ int main()
     0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0,
   };
 
-  // create the tilebitmap from the bitvec definition
-  Bitmap bitmap {sf::Vector2u(32, 32), 11, 23};
+  Bitmap bitmap {sf::Vector2i(32, 32), 11, 23};
   bitmap.load(bitvec);
 
-  // run the main loop
   while (window.isOpen())
   {
-    // handle events
     sf::Event event;
     while (window.pollEvent(event))
     {
@@ -102,9 +92,9 @@ int main()
         window.close();
     }
 
-    // draw the bitmap
     window.clear();
     window.draw(bitmap);
     window.display();
   }
 }
+*/

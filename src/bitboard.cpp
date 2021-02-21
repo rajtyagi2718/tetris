@@ -14,13 +14,7 @@ const int length = 23;
 
 std::ostream& print(std::ostream& os, const uint256_t& bigint)
 {
-  std::vector<unsigned char> bitvec {};
-  boost::multiprecision::export_bits(bigint, std::back_inserter(bitvec), 1);
-  if (bitvec.size() >= 3)
-  {
-    bitvec.erase(bitvec.end()-3, bitvec.end());
-  }
-
+  std::vector<unsigned char> bitvec = uint256tobitvec(bigint);
   int curwidth = 11;
   for (auto it = bitvec.crbegin(); it != bitvec.crend(); it++)
   {
@@ -33,6 +27,17 @@ std::ostream& print(std::ostream& os, const uint256_t& bigint)
   }
 
   return os; 
+}
+
+std::vector<unsigned char> uint256tobitvec(const uint256_t& bigint)
+{
+  std::vector<unsigned char> bitvec {};
+  boost::multiprecision::export_bits(bigint, std::back_inserter(bitvec), 1);
+  if (bitvec.size() >= 3)
+  {
+    bitvec.erase(bitvec.end()-3, bitvec.end());
+  }
+  return bitvec;
 }
 
 const uint256_t board {internal::bitvectouint256(

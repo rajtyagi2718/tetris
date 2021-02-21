@@ -10,27 +10,27 @@
 template<typename TAgent>
 class Game
 {
-  public:
-    Game(TAgent agent, Board board, std::ostream& os);
-    void play();
-    
-  private:
-    TAgent agent;
-    Board board;
-    std::ostream& os;
-    std::unique_ptr<Piece> curpiece;
-    std::unique_ptr<Piece> nexpiece;
+public:
+  Game(TAgent agent, Board board, std::ostream& os);
+  virtual void play();
+  
+protected:
+  TAgent agent;
+  Board board;
+  std::ostream& os;
+  std::unique_ptr<Piece> curpiece;
+  std::unique_ptr<Piece> nexpiece;
 
-    bool terminal;
-    int level;
-    int lines;
+  bool terminal;
+  int level;
+  int lines;
 
-    void render();
-    void move();
-    void forward(int action);
-    void backward(int action);
-    bool fall();
-    bool enqueue();  
+  virtual void render();
+  void move();
+  void forward(int action);
+  void backward(int action);
+  bool fall();
+  bool enqueue();  
 };
 
 #endif  // GAME_H

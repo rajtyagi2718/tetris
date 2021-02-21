@@ -1,5 +1,5 @@
-alltests: main.o exception.o exceptiontest.o bitboard.o bitboardtest.o board.o boardtest.o piece.o piecetest.o agent.o agenttest.o game.o gametest.o
-	g++ -std=c++17 main.o ../build/exception.o exceptiontest.o ../build/bitboard.o bitboardtest.o ../build/board.o boardtest.o ../build/piece.o piecetest.o ../build/agent.o agenttest.o ../build/game.o gametest.o -lgtest -lgtest_main -pthread -o alltests
+alltests: main.o exception.o exceptiontest.o bitboard.o bitboardtest.o board.o boardtest.o piece.o piecetest.o agent.o agenttest.o game.o gametest.o graphics.o graphicsgame.o graphicsgametest.o
+	g++ -std=c++17 main.o ../build/exception.o exceptiontest.o ../build/bitboard.o bitboardtest.o ../build/board.o boardtest.o ../build/piece.o piecetest.o ../build/agent.o agenttest.o ../build/game.o gametest.o ../build/graphics.o ../build/graphicsgame.o graphicsgametest.o -lsfml-graphics -lsfml-window -lsfml-system -lgtest -lgtest_main -pthread -o alltests
 
 main.o:
 	g++ -std=c++17 -c main.cpp -o main.o
@@ -39,6 +39,15 @@ game.o:
 
 gametest.o:
 	g++ -std=c++17 -c gametest.cpp -o gametest.o
+
+graphics.o:
+	g++ -std=c++17 -c ../src/graphics.cpp -o ../build/graphics.o
+
+graphicsgame.o:
+	g++ -std=c++17 -c ../src/graphicsgame.cpp -o ../build/graphicsgame.o
+
+graphicsgametest.o:
+	g++ -std=c++17 -c graphicsgametest.cpp -o graphicsgametest.o
 
 clean:
 	rm ./alltests *.o
