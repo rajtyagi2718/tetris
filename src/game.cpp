@@ -7,10 +7,10 @@
 #include <cassert>                 // assert
 
 template<typename TAgent>
-Game<TAgent>::Game(TAgent agent, Board board, std::ostream& os)
+Game<TAgent>::Game(TAgent& agent, Board board, std::ostream& os)
   : agent{agent}, board{board}, os{os}, 
     curpiece{}, nexpiece{spawnpiece()}, 
-    terminal{false}, level{0}, lines{0}
+    terminal{false}, lines{0}
 {
 }
 
@@ -27,11 +27,8 @@ void Game<TAgent>::play()
 
   while (!terminal)
   {
-    for (int i = 2; i > 0; i--)
-    {
-      move(); 
-      render();
-    }
+    move(); 
+    render();
     if (!fall())
     {
       lines += board.clearlines();
@@ -61,7 +58,8 @@ void Game<TAgent>::render()
 template<typename TAgent>
 void Game<TAgent>::move()
 {
-  int action = agent.act(board.getbigint());
+  int action = agent.act(board.getbigint(), curpiece->getbigint(), 
+                         curpiece->getid());
   assert(action < Action_END && "agent action out of range [0, 4]");
   board.rempiece(curpiece->getbigint()); 
   forward(action);
@@ -70,8 +68,9 @@ void Game<TAgent>::move()
   {
     backward(action);
     board.addpiece(curpiece->getbigint());
+    // os << '\n';
   }
-  else { os << "action " << action << '\n'; }
+  // else { os << "action " << action << '\n'; }
 }
 
 template<typename TAgent>
@@ -79,9 +78,9 @@ void Game<TAgent>::forward(int action)
 {
   switch (action)
   {
+    case null:                                  break;
     case rotateleft:  curpiece->rotateleft();   break;
     case left:        curpiece->left();         break;
-    case null:                                  break;
     case right:       curpiece->right();        break;
     case rotateright: curpiece->rotateright();  break;
   }
@@ -90,7 +89,10 @@ void Game<TAgent>::forward(int action)
 template<typename TAgent>
 void Game<TAgent>::backward(int action)
 {
-  forward(Action_END-1 - action); 
+  if (action)
+  {
+    forward(Action_END - action); 
+  }
 }
 
 template<typename TAgent>
@@ -121,3 +123,4 @@ bool Game<TAgent>::enqueue()
 }
 
 template class Game<RandomAgent>;
+template class Game<SearchAgent>;

@@ -1,7 +1,8 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>  // Drawable RenderTarget RenderStates Vector2i Vertex
+#include <vector>             // vector
 
 class Bitmap : public sf::Drawable
 {
@@ -14,7 +15,7 @@ private:
   sf::Vector2i tile;
   int width;
   int height;
-  sf::VertexArray vertices;
+  std::vector<sf::Vertex> vertices;
 };
 
 #endif  // GRAPHICS_H

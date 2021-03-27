@@ -10,6 +10,11 @@ Board::Board()
 {
 }
 
+Board::Board(uint256_t bigint)
+  : bigint{bigint}
+{
+}
+
 uint256_t Board::getbigint()
 {
   // std::cout << "board getter" << std::endl;
@@ -20,6 +25,11 @@ const uint256_t& Board::getbigint() const
 {
   // std::cout << "board const getter" << std::endl;
   return bigint;
+}
+
+void Board::reset(uint256_t bigint)
+{
+  this->bigint = bigint;
 }
 
 std::ostream& operator<<(std::ostream& os, const Board& board)

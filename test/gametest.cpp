@@ -1,3 +1,4 @@
+// TODO  GameTest Combine Random, Search
 #include "../include/game.h"                 //
 #include "../include/agent.h"
 #include "../include/board.h"
@@ -10,6 +11,7 @@ namespace gametest
 {
 using ::testing::TestWithParam;
 using ::testing::Range;
+
 class Random : public TestWithParam<int>
 {
 protected:
@@ -27,4 +29,22 @@ TEST_P(Random, Play)
 }
 
 INSTANTIATE_TEST_CASE_P(GameTest, Random, Range(0, 10));
+
+class Search : public TestWithParam<int>
+{
+protected:
+  Search() : searchagent{}, board{}, msg{}, game{searchagent, board, msg} {}
+  SearchAgent searchagent;
+  Board board;
+  std::ostringstream msg;
+  Game<SearchAgent> game; 
+};
+
+TEST_P(Search, Play)
+{
+  game.play();
+  // std::cout << msg.str() << std::endl;
+}
+
+INSTANTIATE_TEST_CASE_P(GameTest, Search, Range(0, 10));
 }  // namespace gametest

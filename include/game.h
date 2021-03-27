@@ -6,13 +6,12 @@
 #include <ostream>             // ostream
 #include <memory>              // unique_ptr
 
-//template<Element TAgent>
 template<typename TAgent>
 class Game
 {
 public:
-  Game(TAgent agent, Board board, std::ostream& os);
-  virtual void play();
+  Game(TAgent& agent, Board board, std::ostream& os);
+  void play();
   
 protected:
   TAgent agent;
@@ -22,7 +21,6 @@ protected:
   std::unique_ptr<Piece> nexpiece;
 
   bool terminal;
-  int level;
   int lines;
 
   virtual void render();

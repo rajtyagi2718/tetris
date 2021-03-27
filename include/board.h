@@ -10,8 +10,10 @@ class Board
 {
 public:
   Board();
+  Board(uint256_t bigint);
   uint256_t getbigint();
   const uint256_t& getbigint() const;
+  void reset(uint256_t bigint);
   friend std::ostream& operator<<(std::ostream& os, const Board& board);
   bool checkpiece(const uint256_t& piece);  
   void addpiece(const uint256_t& piece);  

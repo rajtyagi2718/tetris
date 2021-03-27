@@ -9,33 +9,29 @@
 template<typename TAgent>
 class GraphicsGame : public Game<TAgent>
 {
-using Game<TAgent>::Game;
-using Game<TAgent>::agent;
-using Game<TAgent>::board;
-using Game<TAgent>::os;
-using Game<TAgent>::curpiece;
-using Game<TAgent>::nexpiece;
-using Game<TAgent>::terminal;
-using Game<TAgent>::level;
-using Game<TAgent>::lines;
-using Game<TAgent>::move;
-using Game<TAgent>::forward;
-using Game<TAgent>::backward;
-using Game<TAgent>::fall;
-using Game<TAgent>::enqueue;  
-
 public:
-  GraphicsGame(TAgent agent, Board board, std::ostream& os);
-  void play();
+  GraphicsGame(TAgent& agent, Board board, std::ostream& os);
+  using Game<TAgent>::play;
   
 private:
   Bitmap bitmap;
   sf::RenderWindow window;
-  sf::Clock renderclock;
-  sf::Clock fallclock;
   sf::Time rendertime;
-  sf::Time falltime;
   void render();
+
+  // using Game<TAgent>::Game;
+  // using Game<TAgent>::agent;
+  using Game<TAgent>::board;
+  using Game<TAgent>::os;
+  // using Game<TAgent>::curpiece;
+  // using Game<TAgent>::nexpiece;
+  // using Game<TAgent>::terminal;
+  // using Game<TAgent>::lines;
+  // using Game<TAgent>::move;
+  // using Game<TAgent>::forward;
+  // using Game<TAgent>::backward;
+  // using Game<TAgent>::fall;
+  // using Game<TAgent>::enqueue;  
 };
 
 #endif  // GRAPHICSGAME_H
