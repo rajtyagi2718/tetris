@@ -21,9 +21,7 @@ class OperationBase
 {
 protected:
   OperationBase(int id)
-    : piece{spawnpieceid(id)},
-      startint{piece->getbigint()},
-      msg{}
+    : piece{spawnpieceid(id)}, startint{piece->getbigint()}, msg{}
   {}
 
   std::unique_ptr<Piece> piece;

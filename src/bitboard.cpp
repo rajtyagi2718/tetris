@@ -33,11 +33,23 @@ std::vector<unsigned char> uint256tobitvec(const uint256_t& bigint)
 {
   std::vector<unsigned char> bitvec {};
   boost::multiprecision::export_bits(bigint, std::back_inserter(bitvec), 1);
-  if (bitvec.size() >= 3)
-  {
-    bitvec.erase(bitvec.end()-3, bitvec.end());
-  }
+  // if (bitvec.size() >= 3)
+  // {
+  //   bitvec.erase(bitvec.end()-3, bitvec.end());
+  // }
   return bitvec;
+}
+
+int countbits(const uint256_t& bigint)
+{
+  int ret = 0;
+  uint256_t x = 1;
+  for (int i = 0; i < 256; i++)
+  {
+    if (x & bigint) { ++ret; }
+    x <<= 1;
+  }
+  return ret;
 }
 
 const uint256_t board {internal::bitvectouint256(

@@ -34,8 +34,8 @@ int SearchAgent::act(uint256_t boardint, uint256_t pieceint, int pieceid)
   if (actions.empty())
   {
     searchgame.reset(boardint, pieceid);
-    actions.clear();
-    searchgame.search(actions);
+    searchgame.search();
+    searchgame.bestactions(actions);
   } 
   int ret = actions.back();
   actions.pop_back();

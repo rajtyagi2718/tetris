@@ -23,6 +23,8 @@ public:
   void left();
   void right();
   bool top() const;
+  bool valid() const;
+  std::ostream& printrotations(std::ostream& os) const;
 
 protected:  
   // abstract class

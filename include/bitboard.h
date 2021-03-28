@@ -13,6 +13,7 @@ extern const int length;
 
 std::ostream& print(std::ostream& os, const uint256_t& bigint);
 std::vector<unsigned char> uint256tobitvec(const uint256_t& bigint);
+int countbits(const uint256_t& bigint);
 
 // BOARD
 // 20x10 play field

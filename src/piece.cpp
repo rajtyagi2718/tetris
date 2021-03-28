@@ -93,6 +93,28 @@ bool Piece::top() const
   return !(getbigint() & ~upper);
 }
 
+bool Piece::valid() const
+{
+  for (auto& x : rotations)
+  {
+    if (bitboard::countbits(x) != 4)
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+std::ostream& Piece::printrotations(std::ostream& os) const
+{
+  for (int i = 0; i < rotations.size(); i++)
+  {
+    os << "rot " << i << std::endl; 
+    bitboard::print(os, rotations[i]);
+    os << std::endl;
+  }
+  return os;
+}
 
 IPiece::IPiece()
   : Piece(ipiece,
