@@ -56,4 +56,4 @@ searchgametest.o:
 	g++ -std=c++17 -c searchgametest.cpp -o searchgametest.o
 
 clean:
-	rm ./alltests *.o ../build/*.o
+	rm *.o ../build/*.o ./alltests
