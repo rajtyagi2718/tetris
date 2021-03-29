@@ -98,6 +98,11 @@ bool Piece::top() const
   return !(getbigint() & ~upper);
 }
 
+bool Piece::last() const
+{
+  return !!(getbigint() & bitboard::last);
+}
+
 bool Piece::valid() const
 {
   for (auto& x : rotations)

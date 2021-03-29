@@ -15,7 +15,6 @@ TEST(GraphicsGameTest, Constructor)
   Board board{};
   std::ostringstream msg{};
   // GraphicsGame<RandomAgent> graphicsgame{randomagent, board, msg};
-  // GraphicsGame<RandomAgent> graphicsgame{randomagent, board, std::cout};
   GraphicsGame<RandomAgent> graphicsgame{randomagent, board, std::cout};
   graphicsgame.play();
 }

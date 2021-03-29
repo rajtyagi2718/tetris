@@ -122,7 +122,6 @@ void SearchGame::undo(int action)
 
 void SearchGame::forward(int action)
 {
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "pre forward"); }
   switch (action)
   {
     case null:                               break;
@@ -131,33 +130,27 @@ void SearchGame::forward(int action)
     case right:       piece->right();        break;
     case rotateright: piece->rotateright();  break;
   }
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "after forward"); }
 }
 
 void SearchGame::backward(int action)
 {
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "pre backward"); }
   if (action)
   {
     forward(Action_END - action); 
   }
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "after backward"); }
 }
 
 bool SearchGame::fall()
 {
   board.rempiece(piece->getbigint());
   piece->printrotations(std::cout);
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "pre fall"); }
   piece->down();
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "down fall"); }
   if (board.trypiece(piece->getbigint()))
   {
     return true;
   }
 
   piece->up();
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "up fall"); }
   board.addpiece(piece->getbigint());
   return false;
 }
@@ -165,8 +158,6 @@ bool SearchGame::fall()
 void SearchGame::rise()
 {
   board.rempiece(piece->getbigint());
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "pre rise"); }
   piece->up();
-  if (!piece->valid()) { piece->printrotations(std::cout); assert(false && "after rise"); }
   board.addpiece(piece->getbigint());
 }

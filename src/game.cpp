@@ -68,9 +68,9 @@ void Game<TAgent>::move()
   {
     backward(action);
     board.addpiece(curpiece->getbigint());
-    // os << '\n';
+    os << '\n';
   }
-  // else { os << "action " << action << '\n'; }
+  else { os << "action " << action << '\n'; }
 }
 
 template<typename TAgent>
@@ -98,13 +98,16 @@ void Game<TAgent>::backward(int action)
 template<typename TAgent>
 bool Game<TAgent>::fall()
 {
+  if (curpiece->last())
+  {
+    return false;
+  }
   board.rempiece(curpiece->getbigint());
   curpiece->down();
   if (board.trypiece(curpiece->getbigint()))
   {
     return true;
   }
-
   curpiece->up();
   board.addpiece(curpiece->getbigint());
   return false;

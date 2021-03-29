@@ -14,7 +14,9 @@ GraphicsGame<TAgent>::GraphicsGame(TAgent& agent, Board board, std::ostream& os)
   : Game<TAgent>{agent, board, os},
     bitmap{sf::Vector2i(32, 32), 11, 23},
     window{sf::VideoMode(352, 736), "tetris"},
-    rendertime{sf::seconds(0.03333333f)}
+    rendertime{sf::seconds(0.01111111f)}
+    // rendertime{sf::seconds(0.01666666f)}
+    // rendertime{sf::seconds(0.03333333f)}
     // rendertime{sf::seconds(0.11111111f)}
 {
 }

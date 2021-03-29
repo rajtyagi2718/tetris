@@ -84,9 +84,9 @@ INSTANTIATE_TEST_CASE_P(PieceTest, OperationPrint,
   Combine(Range(0, 7),
           Values(std::make_tuple<int, int>(rotateright, 4),
                  std::make_tuple<int, int>(rotateleft,  4),
-                 std::make_tuple<int, int>(down,       20),
-                 std::make_tuple<int, int>(left,        4),
-                 std::make_tuple<int, int>(right,       3))));
+                 std::make_tuple<int, int>(down,       19),
+                 std::make_tuple<int, int>(left,        5),
+                 std::make_tuple<int, int>(right,       4))));
 
 class OperationStack
   : public TestWithParam<std::tuple<int, int>>,
@@ -94,11 +94,8 @@ class OperationStack
 {
 protected:
   OperationStack()
-    : OperationBase{std::get<0>(GetParam())},
-      operations{},
-      gen(rd()), 
-      operation_distr(0, Operation_END-1), 
-      stacksize_distr(10, 100)
+    : OperationBase{std::get<0>(GetParam())}, operations{},
+      gen(rd()), operation_distr(0, Operation_END-1), stacksize_distr(10, 300)
   {}
 
   std::vector<int> operations; 
@@ -115,12 +112,12 @@ TEST_P(OperationStack, Identities)
   for (int i = 0; i < stacksize_distr(gen); i++)
   {
     int op;
-    // piece cannot go up when at top
+    // piece cannot go up when at top nor down when at bottom
     do
     {
       op = operation_distr(gen);
     } 
-    while ((op == up) && (!row));
+    while ((op == up && !row) || (op == down && piece->last()));
 
     // check identity: operate + invert
     uint256_t bigint = piece->getbigint();
@@ -129,6 +126,7 @@ TEST_P(OperationStack, Identities)
     ASSERT_EQ(bigint, piece->getbigint()) << "bad inverse operation " << op;
 
     operate(op);
+    ASSERT_TRUE(piece->valid());
 
     // undo if piece hits border
     if (piece->getbigint() & bitboard::board)

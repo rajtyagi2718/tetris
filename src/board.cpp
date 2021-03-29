@@ -74,7 +74,7 @@ int Board::clearlines()
 
   if ((bigint & line) == line)
   {
-    // remove top line from board
+    // clear top line from board
     bigint &= ~line;
     count++;
   }

@@ -15,7 +15,9 @@ using ::testing::Range;
 class Random : public TestWithParam<int>
 {
 protected:
-  Random() : randomagent{}, board{}, msg{}, game{randomagent, board, msg} {}
+  Random() 
+    : randomagent{}, board{}, msg{}, game{randomagent, board, msg}
+  {}
   RandomAgent randomagent;
   Board board;
   std::ostringstream msg;

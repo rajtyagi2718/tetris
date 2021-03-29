@@ -23,6 +23,7 @@ public:
   void left();
   void right();
   bool top() const;
+  bool last() const;
   bool valid() const;
   std::ostream& printrotations(std::ostream& os) const;
 
