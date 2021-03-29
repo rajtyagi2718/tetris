@@ -16,8 +16,8 @@ public:
   int getid() const;
   unsigned int getrot() const;
   friend std::ostream& operator<<(std::ostream& os, const Piece& piece); 
-  virtual void rotateright();
-  virtual void rotateleft();
+  void rotateright();
+  void rotateleft();
   void up();
   void down();
   void left();
@@ -29,26 +29,14 @@ public:
 protected:  
   // abstract class
   Piece(int id, uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3);  
+  Piece(int id, uint256_t r0, uint256_t r1);  
   Piece(int id, uint256_t r);  
 
 private:
-  unsigned int rot;  // getter % 4
   int id;
+  unsigned int rot;  // getter %
+  unsigned int numrot;
   std::vector<uint256_t> rotations;
-};
-
-class IPiece : public Piece
-{
-  public:
-    IPiece();
-};
-
-class OPiece : public Piece
-{
-public:
-  OPiece();
-  void rotateright() override;
-  void rotateleft() override;
 };
 
 class TPiece : public Piece
@@ -63,16 +51,16 @@ public:
   JPiece();
 };
 
-class LPiece : public Piece
-{
-public:
-  LPiece();
-};
-
 class ZPiece : public Piece
 {
 public:
   ZPiece();
+};
+
+class OPiece : public Piece
+{
+public:
+  OPiece();
 };
 
 class SPiece : public Piece
@@ -81,7 +69,19 @@ public:
   SPiece();
 };
 
-enum PieceID {ipiece, opiece, tpiece, jpiece, lpiece, zpiece, spiece, 
+class LPiece : public Piece
+{
+public:
+  LPiece();
+};
+
+class IPiece : public Piece
+{
+  public:
+    IPiece();
+};
+
+enum PieceID {tpiece, jpiece, zpiece, opiece, spiece, lpiece, ipiece,
               PieceID_END};
 
 std::unique_ptr<Piece> spawnpiece();

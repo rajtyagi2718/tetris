@@ -8,12 +8,17 @@
 #include <cassert>                           // assert
 
 Piece::Piece(int id, uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3)  
-  : rot{0}, id{id}, rotations{r0, r1, r2, r3}
+  : id{id}, rot{0}, numrot{4}, rotations{r0, r1, r2, r3}
 {
 }
 
-Piece::Piece(int id, uint256_t r)  
-  : rot{0}, id{id}, rotations{r}
+Piece::Piece(int id, uint256_t r0, uint256_t r1)  
+  : id{id}, rot{0}, numrot{2}, rotations{r0, r1}
+{
+}
+
+Piece::Piece(int id, uint256_t r0)  
+  : id{id}, rot{0}, numrot{1}, rotations{r0}
 {
 }
 
@@ -46,12 +51,12 @@ std::ostream& operator<<(std::ostream& os, const Piece& piece)
 
 void Piece::rotateright()
 {
-  rot = (rot + 1) % 4; 
+  rot = (rot + 1) % numrot; 
 } 
 
 void Piece::rotateleft()
 {
-  rot = (rot - 1) % 4; 
+  rot = (rot - 1) % numrot;
 } 
 
 void Piece::up()
@@ -107,7 +112,7 @@ bool Piece::valid() const
 
 std::ostream& Piece::printrotations(std::ostream& os) const
 {
-  for (int i = 0; i < rotations.size(); i++)
+  for (int i = 0; i < numrot; i++)
   {
     os << "rot " << i << std::endl; 
     bitboard::print(os, rotations[i]);
@@ -116,71 +121,44 @@ std::ostream& Piece::printrotations(std::ostream& os) const
   return os;
 }
 
-IPiece::IPiece()
-  : Piece(ipiece,
-          bitboard::ipiece0, 
-          bitboard::ipiece1, 
-          bitboard::ipiece2,
-          bitboard::ipiece3)
-{
-}
-
-// rotation invariant
-OPiece::OPiece()
-  : Piece(opiece, bitboard::opiece)
-{
-}
-
-void OPiece::rotateright()
-{
-}
-
-void OPiece::rotateleft()
-{
-}
-
 TPiece::TPiece()
   : Piece(tpiece,
-          bitboard::tpiece0, 
-          bitboard::tpiece1, 
-          bitboard::tpiece2,
-          bitboard::tpiece3)
+          bitboard::tpiece0, bitboard::tpiece1, 
+          bitboard::tpiece2, bitboard::tpiece3)
 {
 }
 
 JPiece::JPiece()
   : Piece(jpiece,
-          bitboard::jpiece0, 
-          bitboard::jpiece1, 
-          bitboard::jpiece2,
-          bitboard::jpiece3)
+          bitboard::jpiece0, bitboard::jpiece1, 
+          bitboard::jpiece2, bitboard::jpiece3)
+{
+}
+
+ZPiece::ZPiece()
+  : Piece(zpiece, bitboard::zpiece0, bitboard::zpiece1)
+{
+}
+
+OPiece::OPiece()
+  : Piece(opiece, bitboard::opiece0)
+{
+}
+
+SPiece::SPiece()
+  : Piece(spiece, bitboard::spiece0, bitboard::spiece1)
 {
 }
 
 LPiece::LPiece()
   : Piece(lpiece,
-          bitboard::lpiece0, 
-          bitboard::lpiece1, 
-          bitboard::lpiece2,
-          bitboard::lpiece3)
+          bitboard::lpiece0, bitboard::lpiece1, 
+          bitboard::lpiece2, bitboard::lpiece3)
 {
 }
 
-ZPiece::ZPiece()
-  : Piece(zpiece,
-          bitboard::zpiece0, 
-          bitboard::zpiece1, 
-          bitboard::zpiece2,
-          bitboard::zpiece3)
-{
-}
-
-SPiece::SPiece()
-  : Piece(spiece,
-          bitboard::spiece0, 
-          bitboard::spiece1, 
-          bitboard::spiece2,
-          bitboard::spiece3)
+IPiece::IPiece()
+  : Piece(ipiece, bitboard::ipiece0, bitboard::ipiece1)
 {
 }
 

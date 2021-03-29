@@ -12,12 +12,12 @@ TEST(RandomAgentTest, Act)
   }
 }
 
-TEST(SearchAgentTest, Act)
-{
-  SearchAgent sa{};
-  for (int i = 0; i < 10; i++)
-  {
-    sa.act(0, 0, 0);
-  }
-}
+// TEST(SearchAgentTest, Act)
+// {
+//   SearchAgent sa{};
+//   for (int i = 0; i < 10; i++)
+//   {
+//     sa.act(0, 0, 0);
+//   }
+// }
 }  // namespace agenttest

@@ -1,3 +1,8 @@
+TODO NES rotation system
+
+TODO board.stick
+  
+
 g++ -std=c++17 -c ../src/searchgame.cpp -o ../build/searchgame.o && g++ -std=c++17 main.o ../build/exception.o ../build/bitboard.o ../build/board.o ../build/piece.o ../build/agent.o ../build/game.o ../build/searchgame.o searchgametest.cpp -lgtest -lgtest_main -pthread -o searchtests && ./searchtests   
 
 TODO SearchAgent, Search 

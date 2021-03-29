@@ -6,10 +6,10 @@
 
 namespace searchgametest
 {
-TEST(SearchGameTest, Search)
-{
-  SearchGame searchgame {};
-  searchgame.reset(bitboard::board, 0); 
-  searchgame.search(); 
-}
+// TEST(SearchGameTest, Search)
+// {
+//   SearchGame searchgame {};
+//   searchgame.reset(bitboard::board, 0); 
+//   searchgame.search(); 
+// }
 }  // namespace searchgametest

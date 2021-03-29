@@ -20,11 +20,11 @@ TEST(GraphicsGameTest, Constructor)
   graphicsgame.play();
 }
 
-TEST(GraphicsGameSearchAgentTest, Constructor)
-{
-  SearchAgent searchagent{};
-  Board board{};
-  GraphicsGame<SearchAgent> graphicsgame{searchagent, board, std::cout};
-  graphicsgame.play();
-}
+// TEST(GraphicsGameSearchAgentTest, Constructor)
+// {
+//   SearchAgent searchagent{};
+//   Board board{};
+//   GraphicsGame<SearchAgent> graphicsgame{searchagent, board, std::cout};
+//   graphicsgame.play();
+// }
 }  // namespace graphicsgametest

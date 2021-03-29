@@ -30,21 +30,21 @@ TEST_P(Random, Play)
 
 INSTANTIATE_TEST_CASE_P(GameTest, Random, Range(0, 10));
 
-class Search : public TestWithParam<int>
-{
-protected:
-  Search() : searchagent{}, board{}, msg{}, game{searchagent, board, msg} {}
-  SearchAgent searchagent;
-  Board board;
-  std::ostringstream msg;
-  Game<SearchAgent> game; 
-};
-
-TEST_P(Search, Play)
-{
-  game.play();
-  // std::cout << msg.str() << std::endl;
-}
-
-INSTANTIATE_TEST_CASE_P(GameTest, Search, Range(0, 10));
+// class Search : public TestWithParam<int>
+// {
+// protected:
+//   Search() : searchagent{}, board{}, msg{}, game{searchagent, board, msg} {}
+//   SearchAgent searchagent;
+//   Board board;
+//   std::ostringstream msg;
+//   Game<SearchAgent> game; 
+// };
+// 
+// TEST_P(Search, Play)
+// {
+//   game.play();
+//   // std::cout << msg.str() << std::endl;
+// }
+// 
+// INSTANTIATE_TEST_CASE_P(GameTest, Search, Range(0, 10));
 }  // namespace gametest
