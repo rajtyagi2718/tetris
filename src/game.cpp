@@ -12,6 +12,7 @@ Game<TAgent>::Game(TAgent& agent, Board board, std::ostream& os)
     curpiece{}, nexpiece{spawnpiece()}, 
     terminal{false}, lines{0}
 {
+  os << "GAME STARTED" << '\n';
 }
 
 // TODO nexpiece only after curpiece falls once

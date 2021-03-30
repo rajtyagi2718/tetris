@@ -18,7 +18,7 @@
 using boost::multiprecision::uint256_t; 
 
 SearchGame::SearchGame()
-  : board{}, piece{}, paths{}
+  : board{}, piece{}, paths{}, cache{}
 {
 }
 
@@ -33,11 +33,10 @@ void SearchGame::reset(uint256_t boardint, int pieceid)
 {
   board.reset(boardint);
   piece = spawnpieceid(pieceid);
-  for (int i = 0; i < 17; i++) { fall(); }
-  std::cout << board << std::endl;
+  cache.clear();
 }
 
-// 5**20 nodes => too large for memory. track path
+// 4*20*10 nodes => too large for memory. track path
 
 void SearchGame::bestactions(std::vector<int>& actions)
 {
@@ -49,6 +48,7 @@ void SearchGame::search()
 {
   std::vector<int> path {};
   std::vector<std::pair<int, int>> stack;
+  cache.insert(piece->getbigint());
 
   for (auto action : legalactions())
   {
@@ -71,6 +71,7 @@ void SearchGame::search()
     if (!fall())
     {
       paths.push_back(path);
+      return;
       undo(action); 
       continue;
     }
@@ -82,6 +83,8 @@ void SearchGame::search()
       stack.push_back({count, action});
     }
   }
+  std::cout << "num paths " << paths.size() << std::endl;
+  std::cout << "cache size " << cache.size() << std::endl;
 }
 
 std::vector<int> SearchGame::legalactions()
@@ -89,9 +92,13 @@ std::vector<int> SearchGame::legalactions()
   std::vector<int> ret;
   for (int action = 0; action < Action_END; action++)
   {
-    if (move(action))
+    if (move(action)) 
     {
-      ret.push_back(action);
+      if (!cache.count(piece->getbigint()))
+      {
+        ret.push_back(action);
+        cache.insert(piece->getbigint());
+      }
       undo(action);
     }
   }
@@ -102,12 +109,10 @@ bool SearchGame::move(int action)
 {
   board.rempiece(piece->getbigint()); 
   forward(action);
-
   if (board.trypiece(piece->getbigint()))
   {
     return true;
   }
-
   backward(action);
   board.addpiece(piece->getbigint());
   return false;
@@ -142,14 +147,16 @@ void SearchGame::backward(int action)
 
 bool SearchGame::fall()
 {
+  if (piece->last())
+  {
+    return false;
+  }
   board.rempiece(piece->getbigint());
-  piece->printrotations(std::cout);
   piece->down();
   if (board.trypiece(piece->getbigint()))
   {
     return true;
   }
-
   piece->up();
   board.addpiece(piece->getbigint());
   return false;
