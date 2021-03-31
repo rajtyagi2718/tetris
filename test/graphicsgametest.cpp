@@ -9,21 +9,20 @@
 
 namespace graphicsgametest
 {
-TEST(GraphicsGameTest, Constructor)
-{
-  RandomAgent randomagent{};
-  Board board{};
-  std::ostringstream msg{};
-  // GraphicsGame<RandomAgent> graphicsgame{randomagent, board, msg};
-  GraphicsGame<RandomAgent> graphicsgame{randomagent, board, std::cout};
-  graphicsgame.play();
-}
-
-// TEST(GraphicsGameSearchAgentTest, Constructor)
+// TEST(GraphicsGameRandomAgentTest, Constructor)
 // {
-//   SearchAgent searchagent{};
+//   RandomAgent randomagent{};
 //   Board board{};
-//   GraphicsGame<SearchAgent> graphicsgame{searchagent, board, std::cout};
+//   std::ostringstream msg{};
+//   GraphicsGame<RandomAgent> graphicsgame{randomagent, board, msg};
 //   graphicsgame.play();
 // }
+
+TEST(GraphicsGameSearchAgentTest, Constructor)
+{
+  SearchAgent searchagent{};
+  Board board{};
+  GraphicsGame<SearchAgent> graphicsgame{searchagent, board, std::cout};
+  graphicsgame.play();
+}
 }  // namespace graphicsgametest

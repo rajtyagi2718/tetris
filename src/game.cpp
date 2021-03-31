@@ -6,6 +6,8 @@
 #include <utility>                 // move
 #include <cassert>                 // assert
 
+#include <iostream>
+
 template<typename TAgent>
 Game<TAgent>::Game(TAgent& agent, Board board, std::ostream& os)
   : agent{agent}, board{board}, os{os}, 

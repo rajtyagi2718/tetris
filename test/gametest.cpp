@@ -7,6 +7,8 @@
 #include <iostream>                          // cout endl
 #include <sstream>                           // ostringstream
 
+#include "../include/bitboard.h"
+
 namespace gametest
 {
 using ::testing::TestWithParam;
@@ -36,7 +38,7 @@ class Search : public TestWithParam<int>
 {
 protected:
   Search()
-   : searchagent{}, board{}, msg{}, game{searchagent, board, std::cout}
+   : searchagent{}, board{}, msg{}, game{searchagent, board, msg}
   {}
   SearchAgent searchagent;
   Board board;
@@ -44,9 +46,9 @@ protected:
   Game<SearchAgent> game; 
 };
 
+
 TEST_P(Search, Play)
 {
-  std::cout << "HERE" << std::endl;
   game.play();
   // std::cout << msg.str() << std::endl;
 }

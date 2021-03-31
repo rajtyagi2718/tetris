@@ -20,6 +20,7 @@ public:
   bool trypiece(const uint256_t& piece);  
   void rempiece(const uint256_t& piece);  
   int clearlines();
+  int countlines();
 
 private:
   uint256_t bigint;

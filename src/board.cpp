@@ -101,6 +101,21 @@ int Board::clearlines()
   return count;
 }
 
+int Board::countlines()
+{
+  int ret = 0;
+  uint256_t line {bitboard::line}; 
+  for (int row = 0; row < bitboard::length-1; row++)
+  {
+    if ((bigint & line) == line)
+    {
+      ret++;
+    }
+    line <<= bitboard::width;
+  }
+  return ret;
+}
+
 /*
 void Board::clearlines()
 {

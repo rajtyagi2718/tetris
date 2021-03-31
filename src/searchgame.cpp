@@ -26,7 +26,7 @@ SearchGame::SearchGame(const SearchGame& searchgame)
   : board{searchgame.board}
 {
   this->piece = searchgame.piece ? 
-                nullptr : spawnpieceid(searchgame.piece->getid());
+                spawnpieceid(searchgame.piece->getid()) : nullptr;
 }
 
 void SearchGame::reset(uint256_t boardint, int pieceid)
@@ -70,8 +70,14 @@ void SearchGame::search()
     assert(move(action));
     if (!fall())
     {
+      if (board.countlines())
+      {
+        std::cout << "REWARD " << board.countlines() << std::endl;
+        paths.clear();
+        paths.push_back(path);
+        return;
+      }
       paths.push_back(path);
-      return;
       undo(action); 
       continue;
     }
