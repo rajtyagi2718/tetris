@@ -18,7 +18,7 @@
 using boost::multiprecision::uint256_t; 
 
 SearchGame::SearchGame()
-  : board{}, piece{}, paths{}, cache{}
+  : board{}, piece{}, paths{}, states{}, cache{}
 {
 }
 
@@ -33,6 +33,8 @@ void SearchGame::reset(uint256_t boardint, int pieceid)
 {
   board.reset(boardint);
   piece = spawnpieceid(pieceid);
+  paths.clear();
+  states.clear();
   cache.clear();
 }
 
@@ -78,6 +80,7 @@ void SearchGame::search()
         return;
       }
       paths.push_back(path);
+      // states.push_back(board.getbigint());
       undo(action); 
       continue;
     }

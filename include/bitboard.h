@@ -10,6 +10,7 @@ using boost::multiprecision::uint256_t;
 
 extern const int width;
 extern const int length;
+extern const int offset;
 
 std::ostream& print(std::ostream& os, const uint256_t& bigint);
 std::vector<unsigned char> uint256tobitvec(const uint256_t& bigint);
@@ -20,6 +21,7 @@ int countbits(const uint256_t& bigint);
 // 23x11 bit mask = 253 bits
 
 extern const uint256_t board;
+extern const uint256_t block;
 extern const uint256_t line;
 extern const uint256_t last;
 extern const uint256_t top;

@@ -3,6 +3,7 @@
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <ostream>                           // ostream
 #include <string>                            // string
+#include <vector>                            // vector
 #include <iostream>
 
 Board::Board()
@@ -99,21 +100,6 @@ int Board::clearlines()
 
   bigint |= bitboard::board; 
   return count;
-}
-
-int Board::countlines()
-{
-  int ret = 0;
-  uint256_t line {bitboard::line}; 
-  for (int row = 0; row < bitboard::length-1; row++)
-  {
-    if ((bigint & line) == line)
-    {
-      ret++;
-    }
-    line <<= bitboard::width;
-  }
-  return ret;
 }
 
 /*

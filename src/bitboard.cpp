@@ -11,6 +11,7 @@ namespace bitboard
 {
 const int width  = 11;
 const int length = 23;
+const int offset = 3;
 
 std::ostream& print(std::ostream& os, const uint256_t& bigint)
 {
@@ -77,6 +78,10 @@ const uint256_t board {internal::bitvectouint256(
    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
+
+const uint256_t block {internal::bitvectouint256(
+  {0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})};
 
 const uint256_t line {internal::bitvectouint256(
   {0, 0, 0,
