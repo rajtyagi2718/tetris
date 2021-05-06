@@ -2,31 +2,73 @@
 #include "../include/board.h"       // Board
 #include "../include/piece.h"       // Piece
 #include "../include/agent.h"       // Action
+#include "../include/features.h"    // values
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <vector>                   // vector
 #include <utility>                  // pair
-#include <algorithm>                // copy
+#include <algorithm>                // copy max_element
 #include <iterator>                 // back_inserter
 #include <memory>                   // unique_ptr
 #include <cassert>                  // assert
 
 #include "../include/bitboard.h"
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 
 using boost::multiprecision::uint256_t; 
 
-SearchGame::SearchGame()
-  : board{}, piece{}, paths{}, states{}, cache{}
+SearchGame::SearchGame() : board{}, piece{}, weights{}, paths{}, cache{}
 {
+  std::cout << "search game 1" << std::endl;
+  std::ifstream file {"../src/weights.txt"};
+  if (file.is_open())
+  {
+    std::string line;
+    std::getline(file, line);
+    std::istringstream iss {line};
+    double weight;
+    while (iss >> weight)
+    {
+      weights.push_back(weight);
+    }
+    file.close();
+  } 
+  else
+  {
+    assert(false && "cannot open weights.txt file");
+  }
 }
 
 SearchGame::SearchGame(const SearchGame& searchgame)
-  : board{searchgame.board}
+  : board{searchgame.board}, weights{searchgame.weights}
 {
+  std::cout << "search game copy ctr" << std::endl;
   this->piece = searchgame.piece ? 
                 spawnpieceid(searchgame.piece->getid()) : nullptr;
+}
+
+void SearchGame::search(uint256_t boardint, int curpieceid, int nexpieceid,
+                        std::vector<std::pair<uint256_t, int>>& actions)
+{
+  reset(boardint, curpieceid);
+  dfs();
+
+  prepaths = std::move(paths);
+  
+  for (auto& [prepath, prevalue] : prepaths)
+  {
+    reset(prepath.back().first, nexpieceid); 
+    dfs();
+    auto bestpath = std::max_element(paths.cbegin(), paths.cend(),
+      [](const auto& x, const auto& y) { return x.second < y.second; });
+    prevalue = bestpath->second;
+  }
+
+  paths = std::move(prepaths);
+
+  bestactions(actions); 
 }
 
 void SearchGame::reset(uint256_t boardint, int pieceid)
@@ -34,23 +76,23 @@ void SearchGame::reset(uint256_t boardint, int pieceid)
   board.reset(boardint);
   piece = spawnpieceid(pieceid);
   paths.clear();
-  states.clear();
   cache.clear();
 }
 
-// 4*20*10 nodes => too large for memory. track path
-
-void SearchGame::bestactions(std::vector<int>& actions)
+void SearchGame::bestactions(std::vector<std::pair<uint256_t, int>>& actions)
 {
   assert(!paths.empty());
-  std::copy(paths[0].cbegin(), paths[0].cend(), std::back_inserter(actions));
+  auto path = std::max_element(paths.cbegin(), paths.cend(),
+    [](const auto& x, const auto& y) { return x.second < y.second; });
+  std::copy(path->first.crbegin(), path->first.crend(),
+            std::back_inserter(actions));
+  std::cout << "value " << path->second << std::endl;
 }
 
-void SearchGame::search()
+void SearchGame::dfs()
 {
-  std::vector<int> path {};
+  std::vector<std::pair<uint256_t, int>> path {};
   std::vector<std::pair<int, int>> stack;
-  cache.insert(piece->getbigint());
 
   for (auto action : legalactions())
   {
@@ -65,35 +107,32 @@ void SearchGame::search()
     while (path.size() > count)
     {
       rise();
-      undo(path.back()); 
+      undo(path.back().second); 
+      assert(board.getbigint() == path.back().first && "backtrack failure");
       path.pop_back();
     } 
 
+    uint256_t state = board.getbigint();
     assert(move(action));
+    path.push_back({state, action});
+    ++count;
+
     if (!fall())
     {
-      if (board.countlines())
-      {
-        std::cout << "REWARD " << board.countlines() << std::endl;
-        paths.clear();
-        paths.push_back(path);
-        return;
-      }
-      paths.push_back(path);
-      // states.push_back(board.getbigint());
-      undo(action); 
+      paths.push_back({path, evaluate(board.getbigint())});
+      undo(action);
+      path.pop_back();
+      --count;
       continue;
     }
-    path.push_back(action);
-    ++count;
 
     for (auto action : legalactions())
     {
       stack.push_back({count, action});
     }
   }
-  std::cout << "num paths " << paths.size() << std::endl;
-  std::cout << "cache size " << cache.size() << std::endl;
+  // std::cout << "num paths " << paths.size() << std::endl;
+  // std::cout << "cache size " << cache.size() << std::endl;
 }
 
 std::vector<int> SearchGame::legalactions()
@@ -103,10 +142,10 @@ std::vector<int> SearchGame::legalactions()
   {
     if (move(action)) 
     {
-      if (!cache.count(piece->getbigint()))
+      if (!cache.count(board.getbigint()))
       {
         ret.push_back(action);
-        cache.insert(piece->getbigint());
+        cache.insert(board.getbigint());
       }
       undo(action);
     }
@@ -144,6 +183,7 @@ void SearchGame::forward(int action)
     case right:       piece->right();        break;
     case rotateright: piece->rotateright();  break;
   }
+  assert(piece->valid() && "forward action invalid");
 }
 
 void SearchGame::backward(int action)
@@ -152,6 +192,7 @@ void SearchGame::backward(int action)
   {
     forward(Action_END - action); 
   }
+  assert(piece->valid() && "backward action invalid");
 }
 
 bool SearchGame::fall()
@@ -176,4 +217,19 @@ void SearchGame::rise()
   board.rempiece(piece->getbigint());
   piece->up();
   board.addpiece(piece->getbigint());
+}
+
+double SearchGame::evaluate(uint256_t boardint)
+{
+  std::vector<double> values = features::values(boardint);
+  auto it = weights.cbegin();
+  auto jt = values.cbegin();
+  double ret = 0.0;
+  while (it != weights.cend())
+  {
+    ret += *it * *jt;
+    it++;
+    jt++; 
+  }
+  return ret;
 }

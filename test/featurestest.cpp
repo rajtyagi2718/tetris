@@ -4,50 +4,13 @@
 #include <gtest/gtest.h>                     // 
 #include <iostream>                          // cout endl
 #include <sstream>                           // ostringstream
-#include <tuple>                  // tuple get
-#include <random>                            // random_device mt19937 bernoulli_distribution uniform_int_distribution
+#include <vector>
 
-namespace boardtest
+namespace featurestest
 {
 using boost::multiprecision::uint256_t;
-using ::testing::TestWithParam;
 
-class Features
-{
-protected:
-  FeatureBase(uint256_t boardint, int expected)
-    : boardint{boardint}, expected{expected}, msg{}
-  {}
-
-  uint256_t boardint;
-  int expected;
-  std::ostringstream msg;
-  
-  virtual int feature() = 0;
-
-  void test()
-  {
-    ASSERT_EQ(expected, feature())
-  }
-}
-
-class Clears
-  : public TestWithParam<std::tuple<uint256_t, int>>,
-    public FeatureBase
-{
-protected:
-  Clears() : FeatureBase{std::get<0>(GetParam()), std::get<1>(GetParam())} {}
-
-  int feature() { return features::clears(boardint); }
-};
-
-TEST_P(Clears, HardCoded)
-{
-  bitboard::print(msg, boardint);
-  test()
-}
-
-std::tuple<uint256_t> boardints
+std::vector<uint256_t> boardints
 {
 bitboard::internal::bitvectouint256(
   {1, 1, 1,
@@ -73,12 +36,85 @@ bitboard::internal::bitvectouint256(
    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}),
+
+bitboard::internal::bitvectouint256(
+  {1, 1, 1,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0,
+   1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0,
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+   1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
 };
 
-std::tuple<int> expected_clears {0};
+std::vector<int> expected_clears {0, 3};
+std::vector<int> expected_heights {0, 50};
+std::vector<int> expected_bumps {0, 14};
+std::vector<int> expected_holes {0, 4};
 
-INSTANTIATE_TEST_CASE_P(FeatureTest, Clears,
-  
-  );
-}  // namespace boardtest
+TEST(Clears, HardCoded)
+{
+  auto it = boardints.cbegin();
+  auto jt = expected_clears.cbegin();
+  while (it != boardints.cend())
+  {
+    EXPECT_EQ(features::clears(*it), *jt);
+    it++;
+    jt++;
+  } 
+}
+
+TEST(Height, HardCoded)
+{
+  auto it = boardints.cbegin();
+  auto jt = expected_heights.cbegin();
+  while (it != boardints.cend())
+  {
+    EXPECT_EQ(features::height(*it), *jt);
+    it++;
+    jt++;
+  } 
+}
+
+TEST(Bumps, HardCoded)
+{
+  auto it = boardints.cbegin();
+  auto jt = expected_bumps.cbegin();
+  while (it != boardints.cend())
+  {
+    EXPECT_EQ(features::bumps(*it), *jt);
+    it++;
+    jt++;
+  } 
+}
+
+TEST(Holes, HardCoded)
+{
+  auto it = boardints.cbegin();
+  auto jt = expected_holes.cbegin();
+  while (it != boardints.cend())
+  {
+    EXPECT_EQ(features::holes(*it), *jt);
+    it++;
+    jt++;
+  } 
+}
+}  // namespace featurestest

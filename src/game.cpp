@@ -12,7 +12,7 @@ template<typename TAgent>
 Game<TAgent>::Game(TAgent& agent, Board board, std::ostream& os)
   : agent{agent}, board{board}, os{os}, 
     curpiece{}, nexpiece{spawnpiece()}, 
-    terminal{false}, lines{0}
+    terminal{false}, lines{0}, pieceids{}
 {
   os << "GAME STARTED" << '\n';
 }
@@ -40,6 +40,10 @@ void Game<TAgent>::play()
         terminal = true;
       }
     }
+    else
+    {
+      std::cout << "fall" << std::endl;
+    }
     render(); 
   }
   if (lines) { std::cout << "lines: " << lines << std::endl; }
@@ -50,7 +54,7 @@ void Game<TAgent>::render()
 {
   static int count = -1;
   os << "render: " << count << '\n';
-  os << board << '\n';
+  // os << board << '\n';
   count--;
   if (!count)
   {
@@ -62,7 +66,7 @@ template<typename TAgent>
 void Game<TAgent>::move()
 {
   int action = agent.act(board.getbigint(), curpiece->getbigint(), 
-                         curpiece->getid());
+                         curpiece->getid(), nexpiece->getid());
   assert(action < Action_END && "agent action out of range [0, 4]");
   board.rempiece(curpiece->getbigint()); 
   forward(action);
@@ -103,6 +107,7 @@ bool Game<TAgent>::fall()
 {
   if (curpiece->last())
   {
+    // std::cout << "fall fail last" << std::endl;
     return false;
   }
   board.rempiece(curpiece->getbigint());
@@ -111,6 +116,7 @@ bool Game<TAgent>::fall()
   {
     return true;
   }
+  // std::cout << "fall fail obstructed" << std::endl;
   curpiece->up();
   board.addpiece(curpiece->getbigint());
   return false;
@@ -119,7 +125,13 @@ bool Game<TAgent>::fall()
 template<typename TAgent>
 bool Game<TAgent>::enqueue()
 {
+  std::cout << "enqueue piece" << std::endl;
   curpiece = std::move(nexpiece); 
+  /*
+  pieceids.push_back(curpiece->getid());
+  std::cout << "[ ";
+  for (auto x : pieceids) { std::cout << x << ' '; } std::cout << ']' << std::endl;
+  */
   if (board.trypiece(curpiece->getbigint()))
   {
     nexpiece = spawnpiece();

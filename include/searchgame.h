@@ -17,20 +17,20 @@ class SearchGame
 public:
   SearchGame();
   SearchGame(const SearchGame& searchgame);  // copy ctr for unique_ptr member
-  void reset(uint256_t boardint, int pieceid);
-  void search();
-  void bestactions(std::vector<int>& actions);
+  void search(uint256_t boardint, int curpieceid, int nexpieceid,
+              std::vector<std::pair<uint256_t, int>>& actions);
 
 private:
   Board board; 
   std::unique_ptr<Piece> piece; 
-  std::vector<std::vector<int>> paths;
-  std::vector<uint256_t> states;
+  std::vector<double> weights;
+  std::vector<std::pair<std::vector<std::pair<uint256_t, int>>, double>> paths;
+  std::vector<std::pair<std::vector<std::pair<uint256_t, int>>, double>> prepaths;
   std::set<uint256_t> cache;
   
-  // std::vector<std::pair<int, int>> stack;  // {count, action}
-  // std::vector<std::map<uint256_t, int>> indices;  // [pieceid][state] -> index
-  // std::vector<std::vector<uint256_t>> states;  // [pieceid][index] -> state
+  void reset(uint256_t boardint, int pieceid);
+  void bestactions(std::vector<std::pair<uint256_t, int>>& actions);
+  void dfs();
 
   std::vector<int> legalactions();
   bool move(int action);
@@ -39,6 +39,8 @@ private:
   void backward(int action);
   bool fall();
   void rise();
+
+  double evaluate(uint256_t boardint);
 };
 
 #endif  // SEARCH_H

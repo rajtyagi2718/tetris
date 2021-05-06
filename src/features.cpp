@@ -1,5 +1,6 @@
 #include "../include/features.h"  // features
 #include "../include/bitboard.h"  // width length line block
+#include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <vector>     // vector
 #include <algorithm>  // transform
 #include <numeric>    // accumulate adjacent_difference
@@ -7,6 +8,11 @@
 
 namespace features
 {
+std::vector<double> values(uint256_t boardint)
+{
+  return {clears(boardint), height(boardint), bumps(boardint), holes(boardint)};
+}
+
 int clears(uint256_t boardint)
 {
   int ret = 0;
@@ -24,13 +30,13 @@ int clears(uint256_t boardint)
 
 int height(uint256_t boardint)
 {
-  heights = getheights(boardint);
+  std::vector<int> heights = internal::getheights(boardint);
   return std::accumulate(heights.cbegin(), heights.cend(), 0);
 }
 
 int bumps(uint256_t boardint)
 {
-  heights = getheights(boardint);
+  std::vector<int> heights = internal::getheights(boardint);
   std::adjacent_difference(heights.begin(), heights.end(), heights.begin());
   std::transform(heights.begin()+1, heights.end(), heights.begin()+1,
                  [](auto& x) { return std::abs(x); });
@@ -39,6 +45,20 @@ int bumps(uint256_t boardint)
 
 int holes(uint256_t boardint)
 {
+  std::vector<int> heights = internal::getheights(boardint);
+  int ret = std::accumulate(heights.cbegin(), heights.cend(), 0);
+  uint256_t block = bitboard::block;
+
+  for (int row = 0; row < bitboard::length-1; row++)
+  {
+    block <<= 1;
+    for (int col = 0; col < bitboard::width-1; col++)
+    {
+      if (boardint & block) { ret -= 1; }
+      block <<= 1;
+    }
+  }
+  return ret;
 }
 }  // namespace features
 

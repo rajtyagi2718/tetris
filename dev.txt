@@ -1,13 +1,18 @@
-g++ -std=c++17 ../src/piece.cpp -o ../build/piece.o && g++ -std=c++17 
 
-g++ -std=c++17 -c ../src/searchgame.cpp -o ../build/searchgame.o && g++ -std=c++17 main.o ../build/exception.o ../build/bitboard.o ../build/board.o ../build/piece.o ../build/agent.o ../build/game.o ../build/searchgame.o gametest.cpp -lgtest -lgtest_main -pthread -o gametest && ./gametest
+g++ -std=c++17 -c ../src/searchgame.cpp -o ../build/searchgame.o && g++ -std=c++17 -c ../src/agent.cpp -o ../build/agent.o && g++ -std=c++17 -c ../src/game.cpp -o ../build/game.o
 
-g++ -std=c++17 -c ../src/searchgame.cpp -o ../build/searchgame.o && g++ -std=c++17 main.o ../build/exception.o ../build/bitboard.o ../build/board.o ../build/piece.o ../build/agent.o ../build/game.o ../build/searchgame.o searchgametest.cpp -lgtest -lgtest_main -pthread -o searchtest && ./searchtest
+g++ -std=c++17 main.o ../build/exception.o ../build/bitboard.o ../build/board.o ../build/features.o ../build/piece.o ../build/agent.o ../build/game.o ../build/searchgame.o gametest.cpp -lgtest -lgtest_main -pthread -o gametest && ./gametest
 
-g++ -std=c++17 ../build/exception.o ../build/bitboard.o ../build/board.o ../build/piece.o ../build/agent.o ../build/game.o ../build/graphics.o ../buildgraphicsgame.o ../build/searchgame.o graphicsgametest.cpp -lsfml-graphics -lsfml-window -lsfml-system -lgtest -lgtest_main -pthread -o graphicstest
+g++ -std=c++17 -c ../src/searchgame.cpp -o ../build/searchgame.o && g++ -std=c++17 main.o ../build/exception.o ../build/bitboard.o ../build/board.o ../build/features.o ../build/piece.o ../build/agent.o ../build/game.o ../build/searchgame.o searchgametest.cpp -lgtest -lgtest_main -pthread -o searchgametest && ./searchgametest
+
+g++ -std=c++17 ../build/exception.o ../build/bitboard.o ../build/board.o ../build/features.o ../build/piece.o ../build/agent.o ../build/game.o ../build/graphics.o ../build/graphicsgame.o ../build/searchgame.o graphicsgametest.cpp -lsfml-graphics -lsfml-window -lsfml-system -lgtest -lgtest_main -pthread -o graphicstest && ./graphicstest
 
 g++ -std=c++17 main.o ../build/exception.o exceptiontest.o ../build/bitboard.o bitboardtest.o ../build/board.o boardtest.o ../build/piece.o piecetest.o ../build/agent.o agenttest.o ../build/game.o gametest.o ../build/graphics.o ../build/graphicsgame.o graphicsgametest.o ../build/searchgame.o searchgametest.o -lsfml-graphics -lsfml-window -lsfml-system -lgtest -lgtest_main -pthread -o alltests
 
+TODO
+  searchgame
+    check valid piece
+  
 
 TODO Search.cache
   unique paths
@@ -27,19 +32,6 @@ TODO Search.cache
     choose best
       shortest path
       least moves
-
-TODO SearchAgent, Search 
-  game calls agent when piece spawns
-    agent resets search
-      search copies board, spawns identical piece
-    agent calls search to explore
-    agent calls search for path
-    agent gets next move
-  game calls agent for next move
-    agent gets next move
-  ...
-  game calls agent for next move
-    agent gets next move
 
 TODO rename lowerlower -> lower_lower
   

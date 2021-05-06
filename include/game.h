@@ -5,6 +5,7 @@
 #include "../include/piece.h"
 #include <ostream>             // ostream
 #include <memory>              // unique_ptr
+#include <vector>
 
 template<typename TAgent>
 class Game
@@ -19,6 +20,8 @@ protected:
   std::ostream& os;
   std::unique_ptr<Piece> curpiece;
   std::unique_ptr<Piece> nexpiece;
+
+  std::vector<int> pieceids;
 
   bool terminal;
   int lines;

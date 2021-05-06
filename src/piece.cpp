@@ -105,7 +105,7 @@ bool Piece::last() const
 
 bool Piece::valid() const
 {
-  for (auto& x : rotations)
+  for (auto x : rotations)
   {
     if (bitboard::countbits(x) != 4)
     {
@@ -179,13 +179,13 @@ std::unique_ptr<Piece> spawnpieceid(int id)
 {
   switch (id)
   {
-    case ipiece: return std::make_unique<IPiece>();
-    case opiece: return std::make_unique<OPiece>();
     case tpiece: return std::make_unique<TPiece>();
     case jpiece: return std::make_unique<JPiece>();
-    case lpiece: return std::make_unique<LPiece>();
     case zpiece: return std::make_unique<ZPiece>();
+    case opiece: return std::make_unique<OPiece>();
     case spiece: return std::make_unique<SPiece>();
+    case lpiece: return std::make_unique<LPiece>();
+    case ipiece: return std::make_unique<IPiece>();
     default: assert(false && "spawn piece id out of range [0, 6].");
   }
 }

@@ -9,16 +9,14 @@ TEST(RandomAgentTest, Act)
   RandomAgent ra{};
   for (int i = 0; i < 10; i++)
   {
-    ra.act(0, 0, 0);
+    ra.act(0, 0, 0, 0);
   }
 }
 
 TEST(SearchAgentTest, Act)
 {
+  std::cout << "searchagenttest" << std::endl;
   SearchAgent sa{};
-  for (int i = 0; i < 10; i++)
-  {
-    sa.act(bitboard::board, 0, 0);
-  }
+  sa.act(bitboard::board, 0, 0, 0);
 }
 }  // namespace agenttest

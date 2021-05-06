@@ -9,14 +9,16 @@
 
 namespace graphicsgametest
 {
-// TEST(GraphicsGameRandomAgentTest, Constructor)
-// {
-//   RandomAgent randomagent{};
-//   Board board{};
-//   std::ostringstream msg{};
-//   GraphicsGame<RandomAgent> graphicsgame{randomagent, board, msg};
-//   graphicsgame.play();
-// }
+/*
+TEST(GraphicsGameRandomAgentTest, Constructor)
+{
+  RandomAgent randomagent{};
+  Board board{};
+  std::ostringstream msg{};
+  GraphicsGame<RandomAgent> graphicsgame{randomagent, board, msg};
+  graphicsgame.play();
+}
+*/
 
 TEST(GraphicsGameSearchAgentTest, Constructor)
 {
