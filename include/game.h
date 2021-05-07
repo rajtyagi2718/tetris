@@ -18,6 +18,7 @@ protected:
   TAgent agent;
   Board board;
   std::ostream& os;
+  SevenBagRandomizer randomizer;
   std::unique_ptr<Piece> curpiece;
   std::unique_ptr<Piece> nexpiece;
 

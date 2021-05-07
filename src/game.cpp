@@ -11,7 +11,7 @@
 template<typename TAgent>
 Game<TAgent>::Game(TAgent& agent, Board board, std::ostream& os)
   : agent{agent}, board{board}, os{os}, 
-    curpiece{}, nexpiece{spawnpiece()}, 
+    randomizer{}, curpiece{}, nexpiece{randomizer.spawnpiece()}, 
     terminal{false}, lines{0}, pieceids{}
 {
   os << "GAME STARTED" << '\n';
@@ -40,26 +40,30 @@ void Game<TAgent>::play()
         terminal = true;
       }
     }
+    /*
     else
     {
       std::cout << "fall" << std::endl;
     }
+    */
     render(); 
   }
-  if (lines) { std::cout << "lines: " << lines << std::endl; }
+  std::cout << "lines: " << lines << std::endl;
 }
 
 template<typename TAgent>
 void Game<TAgent>::render()
 {
+  /*
   static int count = -1;
   os << "render: " << count << '\n';
-  // os << board << '\n';
+  os << board << '\n';
   count--;
   if (!count)
   {
     terminal = true;
   }
+  */
 }
 
 template<typename TAgent>
@@ -77,7 +81,7 @@ void Game<TAgent>::move()
     board.addpiece(curpiece->getbigint());
     os << '\n';
   }
-  else { os << "action " << action << '\n'; }
+  // else { os << "action " << action << '\n'; }
 }
 
 template<typename TAgent>
@@ -125,8 +129,9 @@ bool Game<TAgent>::fall()
 template<typename TAgent>
 bool Game<TAgent>::enqueue()
 {
-  std::cout << "enqueue piece" << std::endl;
+  // std::cout << "enqueue piece" << std::endl;
   curpiece = std::move(nexpiece); 
+  std::cout << "piece " << curpiece->getid() << std::endl;
   /*
   pieceids.push_back(curpiece->getid());
   std::cout << "[ ";
@@ -134,7 +139,7 @@ bool Game<TAgent>::enqueue()
   */
   if (board.trypiece(curpiece->getbigint()))
   {
-    nexpiece = spawnpiece();
+    nexpiece = randomizer.spawnpiece();
     return true;
   }
   return false; 

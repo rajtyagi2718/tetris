@@ -38,12 +38,14 @@ int SearchAgent::act(uint256_t boardint, uint256_t pieceint, int pieceid, int ne
     // std::cout << "empty" << std::endl;
     searchgame.search(boardint, pieceid, nexpieceid, actions);
     assert(!actions.empty());
+    /*
     std::cout << "actions size " << actions.size() << std::endl;
     for (auto it = actions.crbegin(); it != actions.crend(); it++)
     {
       std::cout << it->second << ' ';
     }
     std::cout << std::endl;
+    */
   } 
   auto [state, ret] = actions.back();
   assert(state == boardint);

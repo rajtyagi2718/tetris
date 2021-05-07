@@ -5,6 +5,7 @@
 #include <vector>                            // vector
 #include <ostream>                           // ostream
 #include <memory>                            // unique_ptr
+#include <random>                            // random_device mt19937
 
 using boost::multiprecision::uint256_t;
 
@@ -78,9 +79,10 @@ public:
 
 class IPiece : public Piece
 {
-  public:
-    IPiece();
+public:
+  IPiece();
 };
+
 
 enum PieceID {tpiece, jpiece, zpiece, opiece, spiece, lpiece, ipiece,
               PieceID_END};
@@ -88,5 +90,21 @@ enum PieceID {tpiece, jpiece, zpiece, opiece, spiece, lpiece, ipiece,
 std::unique_ptr<Piece> spawnpiece();
 
 std::unique_ptr<Piece> spawnpieceid(int id);
+
+
+class SevenBagRandomizer
+{
+public:
+  SevenBagRandomizer();
+  std::unique_ptr<Piece> spawnpiece();
+
+private:
+  std::vector<int> ids;
+  std::random_device rd; 
+  std::mt19937 gen;
+  std::vector<int>::const_iterator idsit;
+
+  void reset();
+};
 
 #endif  // PIECE_H

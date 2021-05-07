@@ -60,10 +60,15 @@ void SearchGame::search(uint256_t boardint, int curpieceid, int nexpieceid,
   for (auto& [prepath, prevalue] : prepaths)
   {
     reset(prepath.back().first, nexpieceid); 
+    int lines = board.clearlines();
     dfs();
     auto bestpath = std::max_element(paths.cbegin(), paths.cend(),
       [](const auto& x, const auto& y) { return x.second < y.second; });
     prevalue = bestpath->second;
+    if (lines)
+    {
+      prevalue += lines * weights[0];
+    }
   }
 
   paths = std::move(prepaths);
@@ -81,7 +86,7 @@ void SearchGame::reset(uint256_t boardint, int pieceid)
 
 void SearchGame::bestactions(std::vector<std::pair<uint256_t, int>>& actions)
 {
-  assert(!paths.empty());
+  // assert(!paths.empty());
   auto path = std::max_element(paths.cbegin(), paths.cend(),
     [](const auto& x, const auto& y) { return x.second < y.second; });
   std::copy(path->first.crbegin(), path->first.crend(),
@@ -108,7 +113,7 @@ void SearchGame::dfs()
     {
       rise();
       undo(path.back().second); 
-      assert(board.getbigint() == path.back().first && "backtrack failure");
+      // assert(board.getbigint() == path.back().first && "backtrack failure");
       path.pop_back();
     } 
 
@@ -183,7 +188,7 @@ void SearchGame::forward(int action)
     case right:       piece->right();        break;
     case rotateright: piece->rotateright();  break;
   }
-  assert(piece->valid() && "forward action invalid");
+  // assert(piece->valid() && "forward action invalid");
 }
 
 void SearchGame::backward(int action)
@@ -192,7 +197,7 @@ void SearchGame::backward(int action)
   {
     forward(Action_END - action); 
   }
-  assert(piece->valid() && "backward action invalid");
+  // assert(piece->valid() && "backward action invalid");
 }
 
 bool SearchGame::fall()

@@ -5,6 +5,8 @@
 #include <iostream>
 #include <memory>                            // unique_ptr make_unique
 #include <random>                            // random_device mt19937 uniform_int_distribution
+#include <algorithm>                         // shuffle
+#include <numeric>                           // iota
 #include <cassert>                           // assert
 
 Piece::Piece(int id, uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3)  
@@ -188,4 +190,26 @@ std::unique_ptr<Piece> spawnpieceid(int id)
     case ipiece: return std::make_unique<IPiece>();
     default: assert(false && "spawn piece id out of range [0, 6].");
   }
+}
+
+SevenBagRandomizer::SevenBagRandomizer()
+  : ids{std::vector<int>(7)}, gen{rd()}
+{
+  std::iota(ids.begin(), ids.end(), 0);
+  reset();
+}
+
+std::unique_ptr<Piece> SevenBagRandomizer::spawnpiece()
+{
+  if (idsit == ids.cend())
+  {
+    reset();
+  }
+  return spawnpieceid(*idsit++); 
+}
+
+void SevenBagRandomizer::reset()
+{
+  std::shuffle(ids.begin(), ids.end(), gen);
+  idsit = ids.cbegin();
 }
