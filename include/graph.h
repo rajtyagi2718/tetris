@@ -1,21 +1,31 @@
-#include "../include/bitboard.h"
-#include "../include/board.h"
-#include "../include/piece.h"
+#include "bitboard.h"
+#include "board.h"
+#include "piece.h"
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <unordered_map>
+#include <map>
 #include <vector>
+#include <random>  // random_device mt19937 uniform_int_distribution
+#include <utility>  // pair
 
 using boost::multiprecision::uint256_t;
 
 class Graph
 {
+// TODO Action enum duplicate Grapher, Graph, Agent classes
+enum Action {down, rotate_left, left, right, rotate_right, up, Action_END};
+enum PieceId {tpiece, jpiece, zpiece, opiece, spiece, lpiece, ipiece, PieceId_END};
+
 public:
   Graph();
-  uint256_t spawn_piece() const;
-  uint256_t move_piece(const uint256_t& piece, int action) const;
-  print_piece(std::ostream& os, const uint256_t& piece) const;
+  std::pair<uint256_t, int> spawn();
+  void move(std::pair<uint256_t, int>& piece, int action);
 
 private:
-  unordered_map<uint256_t, std::vector<uint256_t>> adj;
-  void load_adj();
+  std::array<std::map<uint256_t, std::array<uint256_t, Action_END>>, 
+             Action_END> afterstates;
+  std::vector<uint256_t> spawn_states;
+
+  std::random_device rd; 
+  std::mt19937 gen;
+  std::uniform_int_distribution<> distrib;
 };

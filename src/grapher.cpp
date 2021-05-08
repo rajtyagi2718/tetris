@@ -1,9 +1,9 @@
 #include "../include/piece.h"
 #include "../include/grapher.h"
-#include <boost/multiprecision/cpp_int.hpp>  // uint256_t
+#include <boost/multiprecision/cpp_int.hpp>
 #include <string>
-#include <fstream>
-#include <algorithm>  // sort
+#include <fstream>                           // ofstream
+#include <algorithm>                         // sort
 #include <iostream>
 
 using boost::multiprecision::uint256_t; 
@@ -113,7 +113,7 @@ void Grapher::write_afterstates(int id)
       file << state;
       for (const auto& afterstate : afterstates[state])
       {
-        file << ',' << afterstate;
+        file << ' ' << afterstate;
       } 
       file << '\n';
     }

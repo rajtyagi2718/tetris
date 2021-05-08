@@ -4,7 +4,7 @@
 #include "bitboard.h"
 #include "piece.h"
 #include "board.h"
-#include <boost/multiprecision/cpp_int.hpp>  // uint256_t
+#include <boost/multiprecision/cpp_int.hpp>
 #include <map>
 #include <array>
 

@@ -3,25 +3,9 @@
 
 TODO
 
-graph
-  load_graph
-  read_graph
-  graph
-  
-  spawn_piece -> state
-  spawn_piece_id id -> state
-  move_piece state -> afterstate or 0 
-  print_piece
+game
+  pass piece [state, id]
 
-piece
-  make_graph
-  save_graph
-  load_graph
-
-
-graph
-  unordered_map: bigint -> [0, 0, rotleftbigint, 0, rightbigint, up, down]
-  operators: [down, rotateleft, left, right, rotateright, up]
 
 search
   bfs start to terminal states
