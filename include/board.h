@@ -10,19 +10,19 @@ class Board
 {
 public:
   Board();
-  Board(uint256_t bigint);
-  uint256_t getbigint();
-  const uint256_t& getbigint() const;
-  void reset(uint256_t bigint);
+  Board(uint256_t state);
+  uint256_t get_state();
+  const uint256_t& get_state() const;
+  void reset();
   friend std::ostream& operator<<(std::ostream& os, const Board& board);
-  bool checkpiece(const uint256_t& piece);  
-  void addpiece(const uint256_t& piece);  
-  bool trypiece(const uint256_t& piece);  
-  void rempiece(const uint256_t& piece);  
-  int clearlines();
+  bool is_valid(const uint256_t& piece);  
+  void add(const uint256_t& piece);  
+  bool try_add(const uint256_t& piece);  
+  void remove(const uint256_t& piece);  
+  int clear_lines();
 
 private:
-  uint256_t bigint;
+  uint256_t state;
 };
 
 #endif  // BOARD_H

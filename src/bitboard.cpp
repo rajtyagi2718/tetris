@@ -85,7 +85,13 @@ const uint256_t line {internal::bitvectouint256(
   {0, 0,
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
 
-const uint256_t last {internal::bitvectouint256(
+const uint256_t top {internal::bitvectouint256(
+  {0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
+
+const uint256_t bottom {internal::bitvectouint256(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -158,7 +164,7 @@ const uint256_t jpiece2 {internal::bitvectouint256(
    0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0})}; 
 
 const uint256_t jpiece3 {internal::bitvectouint256(
-  {0, 0, 0,
+  {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,

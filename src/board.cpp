@@ -4,67 +4,64 @@
 #include <ostream>                           // ostream
 #include <string>                            // string
 #include <vector>                            // vector
-#include <iostream>
 
 Board::Board()
-  : bigint{bitboard::board}
+  : state{bitboard::board}
 {
 }
 
-Board::Board(uint256_t bigint)
-  : bigint{bigint}
+Board::Board(uint256_t state)
+  : state{state}
 {
 }
 
-uint256_t Board::getbigint()
+uint256_t Board::get_state()
 {
-  // std::cout << "board getter" << std::endl;
-  return bigint;
+  return state;
 }
 
-const uint256_t& Board::getbigint() const
+const uint256_t& Board::get_state() const
 {
-  // std::cout << "board const getter" << std::endl;
-  return bigint;
+  return state;
 }
 
-void Board::reset(uint256_t bigint)
+void Board::reset()
 {
-  this->bigint = bigint;
+  this->state = bitboard::board;
 }
 
 std::ostream& operator<<(std::ostream& os, const Board& board)
 {
-  return bitboard::print(os, board.bigint);
+  return bitboard::print(os, board.state);
 }
 
-bool Board::checkpiece(const uint256_t& piece)
+bool Board::is_valid(const uint256_t& piece)
 {
-  return !(bigint & piece);
+  return !(state & piece);
 }
 
-void Board::addpiece(const uint256_t& piece)
+void Board::add(const uint256_t& piece)
 {
-  bigint |= piece; 
+  state |= piece; 
 }
 
-bool Board::trypiece(const uint256_t& piece)
+bool Board::try_add(const uint256_t& piece)
 {
-  if (!(bigint & piece))
+  if (!(state & piece))
   {
-    bigint |= piece;
+    state |= piece;
     return true;
   }
 
   return false;
 }
 
-void Board::rempiece(const uint256_t& piece)
+void Board::remove(const uint256_t& piece)
 {
-  bigint &= ~piece;
+  state &= ~piece;
 }
 
-int Board::clearlines()
+int Board::clear_lines()
 {
   int count = 0;
   // TODO fast check any lines full
@@ -73,10 +70,10 @@ int Board::clearlines()
   int length = bitboard::length;
   uint256_t line{bitboard::line}; 
 
-  if ((bigint & line) == line)
+  if ((state & line) == line)
   {
     // clear top line from board
-    bigint &= ~line;
+    state &= ~line;
     count++;
   }
 
@@ -88,48 +85,16 @@ int Board::clearlines()
 
   for (int row = 1; row < length-1; row++)
   {
-    if ((bigint & line) == line)
+    if ((state & line) == line)
     {
       // above board shifted down union below board
-      bigint = ((bigint & upper) << width) | (bigint & ~line & ~upper);
+      state = ((state & upper) << width) | (state & ~line & ~upper);
       count++;
     }
     upper |= line;
     line <<= width;
   }
 
-  bigint |= bitboard::board; 
+  state |= bitboard::board; 
   return count;
 }
-
-/*
-void Board::clearlines()
-{
-  // TODO fast check any lines full
-  // TODO only check lines within piece range 
-  int width = bitboard::width;
-  uint256_t line{bitboard::line}; 
-  uint256_t upper{bitboard::line};
-  line <<= width; 
-  upper |= line;
-  line <<= width; 
-
-  // line = "00000000000"    upper = "11111111111"
-  //        "00000000000"            "11111111111"
-  //        "11111111111"
-
-  for (int i = 0; i < 20; i++)
-  {
-    if ((bigint & line) == line)
-    {
-      // above board shifted down union below board
-      bigint = ((bigint & upper) << width) | (bigint & ~line & ~upper);
-    }
-    upper |= line;
-    line <<= width;
-  }
-
-  // TODO unnecessary? bit ops keeps border?
-  bigint |= bitboard::board; 
-}
-*/

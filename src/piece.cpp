@@ -1,111 +1,94 @@
-#include "../include/piece.h"                // []Piece
-#include "../include/bitboard.h"             // print width []piece[]
+#include "../include/piece.h"
+#include "../include/bitboard.h"
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <ostream>                           // ostream
-#include <iostream>
 #include <memory>                            // unique_ptr make_unique
-#include <random>                            // random_device mt19937 uniform_int_distribution
-#include <algorithm>                         // shuffle
-#include <numeric>                           // iota
 #include <cassert>                           // assert
 
-Piece::Piece(int id, uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3)  
-  : id{id}, rot{0}, numrot{4}, rotations{r0, r1, r2, r3}
+#include <iostream>
+
+Piece::Piece(uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3)  
+  : rot{0}, num_rot{4}, rotations{r0, r1, r2, r3}
 {
 }
 
-Piece::Piece(int id, uint256_t r0, uint256_t r1)  
-  : id{id}, rot{0}, numrot{2}, rotations{r0, r1}
+Piece::Piece(uint256_t r0, uint256_t r1)  
+  : rot{0}, num_rot{2}, rotations{r0, r1}
 {
 }
 
-Piece::Piece(int id, uint256_t r0)  
-  : id{id}, rot{0}, numrot{1}, rotations{r0}
+Piece::Piece(uint256_t r0)  
+  : rot{0}, num_rot{1}, rotations{r0}
 {
 }
 
-uint256_t Piece::getbigint()
+uint256_t Piece::get_state()
 {
-  //std::cout << "piece getter" << std::endl;
   return rotations[rot];
 }
 
-const uint256_t& Piece::getbigint() const
+const uint256_t& Piece::get_state() const
 {
-  //std::cout << "piece const getter" << std::endl;
   return rotations[rot];
-}
-
-int Piece::getid() const
-{
-  return id;
-}
-
-unsigned int Piece::getrot() const
-{
-  return rot;
-}
-
-std::ostream& operator<<(std::ostream& os, const Piece& piece)
-{
-  return bitboard::print(os, piece.getbigint());
-}
-
-void Piece::rotateright()
-{
-  rot = (rot + 1) % numrot; 
-} 
-
-void Piece::rotateleft()
-{
-  rot = (rot - 1) % numrot;
-} 
-
-void Piece::up()
-{
-  for (auto& bigint : rotations)
-  {
-    bigint >>= bitboard::width; 
-  }
 }
 
 void Piece::down()
 {
-  for (auto& bigint : rotations)
+  for (auto& state : rotations)
   {
-    bigint <<= bitboard::width; 
+    state <<= bitboard::width; 
   }
 }
 
+void Piece::rotate_left()
+{
+  rot = (rot - 1) % num_rot;
+} 
+
 void Piece::left()
 {
-  for (auto& bigint : rotations)
+  for (auto& state : rotations)
   {
-    bigint >>= 1; 
+    state >>= 1; 
   }
 }
 
 void Piece::right()
 {
-  for (auto& bigint : rotations)
+  for (auto& state : rotations)
   {
-    bigint <<= 1; 
+    state <<= 1; 
   }
 }
 
-bool Piece::top() const
+void Piece::rotate_right()
 {
+  rot = (rot + 1) % num_rot; 
+} 
+
+void Piece::up()
+{
+  for (auto& state : rotations)
+  {
+    state >>= bitboard::width; 
+  }
+}
+
+bool Piece::is_top() const
+{
+  return !!(get_state() & bitboard::top);
+  /*
   uint256_t upper {bitboard::line}; 
   upper = upper | (upper << bitboard::width);
-  return !(getbigint() & ~upper);
+  return !(get_state() & ~upper);
+  */
 }
 
-bool Piece::last() const
+bool Piece::is_bottom() const
 {
-  return !!(getbigint() & bitboard::last);
+  return !!(get_state() & bitboard::bottom);
 }
 
-bool Piece::valid() const
+bool Piece::is_valid() const
 {
   for (auto x : rotations)
   {
@@ -117,67 +100,45 @@ bool Piece::valid() const
   return true;
 }
 
-std::ostream& Piece::printrotations(std::ostream& os) const
-{
-  for (int i = 0; i < numrot; i++)
-  {
-    os << "rot " << i << std::endl; 
-    bitboard::print(os, rotations[i]);
-    os << std::endl;
-  }
-  return os;
-}
-
 TPiece::TPiece()
-  : Piece(tpiece,
-          bitboard::tpiece0, bitboard::tpiece1, 
+  : Piece(bitboard::tpiece0, bitboard::tpiece1, 
           bitboard::tpiece2, bitboard::tpiece3)
 {
 }
 
 JPiece::JPiece()
-  : Piece(jpiece,
-          bitboard::jpiece0, bitboard::jpiece1, 
+  : Piece(bitboard::jpiece0, bitboard::jpiece1, 
           bitboard::jpiece2, bitboard::jpiece3)
 {
 }
 
 ZPiece::ZPiece()
-  : Piece(zpiece, bitboard::zpiece0, bitboard::zpiece1)
+  : Piece(bitboard::zpiece0, bitboard::zpiece1)
 {
 }
 
 OPiece::OPiece()
-  : Piece(opiece, bitboard::opiece0)
+  : Piece(bitboard::opiece0)
 {
 }
 
 SPiece::SPiece()
-  : Piece(spiece, bitboard::spiece0, bitboard::spiece1)
+  : Piece(bitboard::spiece0, bitboard::spiece1)
 {
 }
 
 LPiece::LPiece()
-  : Piece(lpiece,
-          bitboard::lpiece0, bitboard::lpiece1, 
+  : Piece(bitboard::lpiece0, bitboard::lpiece1, 
           bitboard::lpiece2, bitboard::lpiece3)
 {
 }
 
 IPiece::IPiece()
-  : Piece(ipiece, bitboard::ipiece0, bitboard::ipiece1)
+  : Piece(bitboard::ipiece0, bitboard::ipiece1)
 {
 }
 
-std::unique_ptr<Piece> spawnpiece()
-{
-  static std::random_device rd; 
-  static std::mt19937 gen(rd());
-  static std::uniform_int_distribution<> distrib(0, 6);
-  return spawnpieceid(distrib(gen));
-}
-
-std::unique_ptr<Piece> spawnpieceid(int id)
+std::unique_ptr<Piece> spawn_piece(int id)
 {
   switch (id)
   {
@@ -190,26 +151,4 @@ std::unique_ptr<Piece> spawnpieceid(int id)
     case ipiece: return std::make_unique<IPiece>();
     default: assert(false && "spawn piece id out of range [0, 6].");
   }
-}
-
-SevenBagRandomizer::SevenBagRandomizer()
-  : ids{std::vector<int>(7)}, gen{rd()}
-{
-  std::iota(ids.begin(), ids.end(), 0);
-  reset();
-}
-
-std::unique_ptr<Piece> SevenBagRandomizer::spawnpiece()
-{
-  if (idsit == ids.cend())
-  {
-    reset();
-  }
-  return spawnpieceid(*idsit++); 
-}
-
-void SevenBagRandomizer::reset()
-{
-  std::shuffle(ids.begin(), ids.end(), gen);
-  idsit = ids.cbegin();
 }

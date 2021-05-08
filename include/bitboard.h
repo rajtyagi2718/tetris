@@ -23,8 +23,8 @@ int countbits(uint256_t bigint);
 extern const uint256_t board;
 extern const uint256_t block;
 extern const uint256_t line;
-extern const uint256_t last;
 extern const uint256_t top;
+extern const uint256_t bottom;
 
 extern const uint256_t tpiece0; 
 extern const uint256_t tpiece1; 

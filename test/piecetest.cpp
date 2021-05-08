@@ -1,8 +1,6 @@
 #include "../include/piece.h"     // 
 #include "../include/bitboard.h"  //
 #include <gtest/gtest.h>          //
-#include <iostream>               // cout endl
-#include <sstream>                // ostringstream
 #include <vector>                 // vector
 #include <tuple>                  // tuple get tie
 #include <memory>                 // unique_ptr make_unique

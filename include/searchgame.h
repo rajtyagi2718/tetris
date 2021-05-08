@@ -5,8 +5,8 @@
 #include "piece.h"  // Piece
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <vector>   // vector
+#include <unordered_map>  // unordered_map 
 #include <set>      // set
-#include <map>      // map
 #include <utility>  // pair
 #include <memory>   // unique_ptr
 
@@ -24,9 +24,10 @@ private:
   Board board; 
   std::unique_ptr<Piece> piece; 
   std::vector<double> weights;
-  std::vector<std::pair<std::vector<std::pair<uint256_t, int>>, double>> paths;
-  std::vector<std::pair<std::vector<std::pair<uint256_t, int>>, double>> prepaths;
-  std::set<uint256_t> cache;
+
+  // afterstate -> state, action
+  std::unordered_map<uint256_t, std::pair<uint256_t, int>> afterstates;
+  std::set<uint256_t> terminalstates;
   
   void reset(uint256_t boardint, int pieceid);
   void bestactions(std::vector<std::pair<uint256_t, int>>& actions);
