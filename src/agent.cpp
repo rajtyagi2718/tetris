@@ -17,7 +17,9 @@ RandomAgent::RandomAgent()
 {
 }
 
-int RandomAgent::act(uint256_t boardint, uint256_t pieceint, int pieceid, int nexpieceid)
+int RandomAgent::act(uint256_t state,
+                     std::pair<uint256_t, int> piece, 
+                     std::pair<uint256_t, int> next_piece)
 {
   static std::random_device rd; 
   static std::mt19937 gen(rd());
@@ -26,41 +28,23 @@ int RandomAgent::act(uint256_t boardint, uint256_t pieceint, int pieceid, int ne
 }
 
 SearchAgent::SearchAgent()
-  : Agent("search"), searchgame{}, actions{}
+  : Agent("search"), actions{}
 {
   actions.reserve(20);
 }
 
-int SearchAgent::act(uint256_t boardint, uint256_t pieceint, int pieceid, int nexpieceid)
+int SearchAgent::act(uint256_t state,
+                     std::pair<uint256_t, int> piece, 
+                     std::pair<uint256_t, int> next_piece)
 {
+  return 0;
   if (actions.empty())
   {
-    // std::cout << "empty" << std::endl;
-    searchgame.search(boardint, pieceid, nexpieceid, actions);
+    // searchgame.search(state, piece, next_piece);
     assert(!actions.empty());
-    /*
-    std::cout << "actions size " << actions.size() << std::endl;
-    for (auto it = actions.crbegin(); it != actions.crend(); it++)
-    {
-      std::cout << it->second << ' ';
-    }
-    std::cout << std::endl;
-    */
   } 
-  auto [state, ret] = actions.back();
-  assert(state == boardint);
-  // if (state != boardint)
-  // {
-  //   std::cout << "\nactual state\n" << boardint << std::endl;
-  //   bitboard::print(std::cout, boardint);
-  //   std::cout << "expected state\n" << state << std::endl;
-  //   bitboard::print(std::cout, state);
-  //   assert(state == boardint);
-  // }
-  // else
-  // {
-  //   std::cout << "states agree, size " << actions.size() << std::endl;
-  // }
+  auto [piece_state, ret] = actions.back();
+  assert(piece.first == piece_state);
   actions.pop_back();
   return ret;
 }

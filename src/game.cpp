@@ -1,23 +1,20 @@
 #include "../include/game.h"
 #include "../include/agent.h"
 #include "../include/board.h"
-#include "../include/piece.h"
+#include "../include/graph.h"
 #include <ostream>                 // ostream
 #include <utility>                 // move
 #include <cassert>                 // assert
 
 #include <iostream>
 
-template<typename TAgent>
-Game<TAgent>::Game(TAgent& agent, Board board, std::ostream& os)
-  : agent{agent}, board{board}, os{os}, 
-    randomizer{}, curpiece{}, nexpiece{randomizer.spawnpiece()}, 
-    terminal{false}, lines{0}, pieceids{}
+template<typename TAgent> Game<TAgent>::Game(
+  TAgent& agent, Board& board, Graph& graph, std::ostream& os)
+  : agent{agent}, board{board}, graph{graph}, os{os}, 
+    piece{}, next_piece{graph.spawn()}, terminal{false}, lines{0}
 {
   os << "GAME STARTED" << '\n';
 }
-
-// TODO nexpiece only after curpiece falls once
 
 template<typename TAgent>
 void Game<TAgent>::play()
@@ -30,22 +27,14 @@ void Game<TAgent>::play()
 
   while (!terminal)
   {
-    move(); 
-    render();
-    if (!fall())
+    if (!move() && !fall())
     {
-      lines += board.clearlines();
+      lines += board.clear_lines();
       if (!enqueue())
       {
         terminal = true;
       }
     }
-    /*
-    else
-    {
-      std::cout << "fall" << std::endl;
-    }
-    */
     render(); 
   }
   std::cout << "lines: " << lines << std::endl;
@@ -54,75 +43,44 @@ void Game<TAgent>::play()
 template<typename TAgent>
 void Game<TAgent>::render()
 {
-  /*
-  static int count = -1;
+  static int count = 0;
+  ++count;
   os << "render: " << count << '\n';
   os << board << '\n';
-  count--;
-  if (!count)
-  {
-    terminal = true;
-  }
-  */
 }
 
 template<typename TAgent>
-void Game<TAgent>::move()
+bool Game<TAgent>::move()
 {
-  int action = agent.act(board.getbigint(), curpiece->getbigint(), 
-                         curpiece->getid(), nexpiece->getid());
+  int action = agent.act(board.get_state(), piece, next_piece);
   assert(action < Action_END && "agent action out of range [0, 4]");
-  board.rempiece(curpiece->getbigint()); 
-  forward(action);
-
-  if (!board.trypiece(curpiece->getbigint()))
+  board.remove(piece.first); 
+  // std::cout << "move" << std::endl;
+  graph.move(piece, action); 
+  if (board.try_add(piece.first))
   {
-    backward(action);
-    board.addpiece(curpiece->getbigint());
-    os << '\n';
+    os << "action " << action << '\n';
+    return true;
   }
-  // else { os << "action " << action << '\n'; }
-}
-
-template<typename TAgent>
-void Game<TAgent>::forward(int action)
-{
-  switch (action)
-  {
-    case null:                                  break;
-    case rotateleft:  curpiece->rotateleft();   break;
-    case left:        curpiece->left();         break;
-    case right:       curpiece->right();        break;
-    case rotateright: curpiece->rotateright();  break;
-  }
-}
-
-template<typename TAgent>
-void Game<TAgent>::backward(int action)
-{
-  if (action)
-  {
-    forward(Action_END - action); 
-  }
+  // std::cout << "undo" << std::endl;
+  graph.undo(piece, action); 
+  board.add(piece.first);
+  return false;
 }
 
 template<typename TAgent>
 bool Game<TAgent>::fall()
 {
-  if (curpiece->last())
-  {
-    // std::cout << "fall fail last" << std::endl;
-    return false;
-  }
-  board.rempiece(curpiece->getbigint());
-  curpiece->down();
-  if (board.trypiece(curpiece->getbigint()))
+  board.remove(piece.first); 
+  // std::cout << "fall" << std::endl;
+  graph.move(piece, 0); 
+  if (board.try_add(piece.first))
   {
     return true;
   }
-  // std::cout << "fall fail obstructed" << std::endl;
-  curpiece->up();
-  board.addpiece(curpiece->getbigint());
+  // std::cout << "up" << std::endl;
+  graph.undo(piece, 0); 
+  board.add(piece.first);
   return false;
 }
 
@@ -130,16 +88,11 @@ template<typename TAgent>
 bool Game<TAgent>::enqueue()
 {
   // std::cout << "enqueue piece" << std::endl;
-  curpiece = std::move(nexpiece); 
-  std::cout << "piece " << curpiece->getid() << std::endl;
-  /*
-  pieceids.push_back(curpiece->getid());
-  std::cout << "[ ";
-  for (auto x : pieceids) { std::cout << x << ' '; } std::cout << ']' << std::endl;
-  */
-  if (board.trypiece(curpiece->getbigint()))
+  piece = std::move(next_piece); 
+  std::cout << "piece " << piece.second << std::endl;
+  if (board.try_add(piece.first))
   {
-    nexpiece = randomizer.spawnpiece();
+    next_piece = graph.spawn();
     return true;
   }
   return false; 

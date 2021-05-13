@@ -1,3 +1,6 @@
+#ifndef GRAPH_H
+#define GRAPH_H
+
 #include "bitboard.h"
 #include "board.h"
 #include "piece.h"
@@ -19,13 +22,16 @@ public:
   Graph();
   std::pair<uint256_t, int> spawn();
   void move(std::pair<uint256_t, int>& piece, int action);
+  void undo(std::pair<uint256_t, int>& piece, int action);
 
 private:
   std::array<std::map<uint256_t, std::array<uint256_t, Action_END>>, 
-             Action_END> afterstates;
+             PieceId_END> afterstates;
   std::vector<uint256_t> spawn_states;
 
   std::random_device rd; 
   std::mt19937 gen;
   std::uniform_int_distribution<> distrib;
 };
+
+#endif  // GRAPH_H

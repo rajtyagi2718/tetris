@@ -6,6 +6,7 @@
 #include "board.h"
 #include <boost/multiprecision/cpp_int.hpp>
 #include <map>
+#include <set>
 #include <array>
 
 using boost::multiprecision::uint256_t;
@@ -23,8 +24,11 @@ private:
   std::unique_ptr<Piece> piece; 
   std::vector<uint256_t> states;
   std::map<uint256_t, std::array<uint256_t, Action_END>> afterstates;
+  std::set<uint256_t> tops;
 
+  void enumerate_tops();
   void explore(uint256_t state);
+  void explore_floor(uint256_t state);
   void forward(int action);
   void backward(int action);
 

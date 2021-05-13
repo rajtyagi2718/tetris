@@ -12,6 +12,7 @@ class Piece
 public:
   uint256_t get_state();
   const uint256_t& get_state() const;
+  std::vector<uint256_t> get_rotations();
 
   void down();
   void rotate_left();
@@ -22,6 +23,7 @@ public:
 
   bool is_top() const;
   bool is_bottom() const;
+  bool is_floor() const;
   bool is_valid() const;
 
 protected:  
@@ -81,5 +83,9 @@ public:
 enum PieceId {tpiece, jpiece, zpiece, opiece, spiece, lpiece, ipiece, PieceId_END};
 
 std::unique_ptr<Piece> spawn_piece(int id);
+
+uint256_t down_state(uint256_t& state);
+uint256_t left_state(uint256_t& state);
+uint256_t right_state(uint256_t& state);
 
 #endif  // PIECE_H

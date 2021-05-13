@@ -25,6 +25,7 @@ extern const uint256_t block;
 extern const uint256_t line;
 extern const uint256_t top;
 extern const uint256_t bottom;
+extern const uint256_t floor;
 
 extern const uint256_t tpiece0; 
 extern const uint256_t tpiece1; 

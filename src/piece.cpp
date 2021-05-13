@@ -31,6 +31,12 @@ const uint256_t& Piece::get_state() const
   return rotations[rot];
 }
 
+
+std::vector<uint256_t> Piece::get_rotations()
+{
+  return rotations;
+}
+
 void Piece::down()
 {
   for (auto& state : rotations)
@@ -86,6 +92,11 @@ bool Piece::is_top() const
 bool Piece::is_bottom() const
 {
   return !!(get_state() & bitboard::bottom);
+}
+
+bool Piece::is_floor() const
+{
+  return !!(get_state() & bitboard::floor);
 }
 
 bool Piece::is_valid() const
@@ -151,4 +162,19 @@ std::unique_ptr<Piece> spawn_piece(int id)
     case ipiece: return std::make_unique<IPiece>();
     default: assert(false && "spawn piece id out of range [0, 6].");
   }
+}
+
+uint256_t down_state(uint256_t& state)
+{ 
+  return state << bitboard::width;
+}
+
+uint256_t left_state(uint256_t& state)
+{ 
+  return state >> 1;
+}
+
+uint256_t right_state(uint256_t& state)
+{ 
+  return state << 1;
 }

@@ -2,35 +2,32 @@
 #define GAME_H
 
 #include "../include/board.h"
-#include "../include/piece.h"
+#include "../include/graph.h"
 #include <ostream>             // ostream
+#include <utility>             // pair
 #include <memory>              // unique_ptr
-#include <vector>
 
 template<typename TAgent>
 class Game
 {
 public:
-  Game(TAgent& agent, Board board, std::ostream& os);
+  Game(TAgent& agent, Board& board, Graph& graph, std::ostream& os);
   void play();
   
 protected:
-  TAgent agent;
-  Board board;
+  TAgent& agent;
+  Board& board;
+  Graph& graph;
   std::ostream& os;
-  SevenBagRandomizer randomizer;
-  std::unique_ptr<Piece> curpiece;
-  std::unique_ptr<Piece> nexpiece;
-
-  std::vector<int> pieceids;
+  
+  std::pair<uint256_t, int> piece;
+  std::pair<uint256_t, int> next_piece;
 
   bool terminal;
   int lines;
 
   virtual void render();
-  void move();
-  void forward(int action);
-  void backward(int action);
+  bool move();
   bool fall();
   bool enqueue();  
 };

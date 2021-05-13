@@ -4,7 +4,6 @@
 #include <string>
 #include <fstream>  // ifstream
 #include <sstream>  // istringstream  
-#include <iostream>
 
 using boost::multiprecision::uint256_t;
 
@@ -17,7 +16,7 @@ Graph::Graph()
   std::string file_name {"../build/afterstates_"};
   for (int id = 0; id < PieceId_END; id++)
   {
-    std::ifstream file {file_name + std::to_string(id)};
+    std::ifstream file {file_name + std::to_string(id) + ".txt"};
     if (file.is_open())
     {
       std::string line;
@@ -56,6 +55,13 @@ std::pair<uint256_t, int> Graph::spawn()
 void Graph::move(std::pair<uint256_t, int>& piece, int action)
 {
   auto& [state, id] = piece;
+  assert(bitboard::countbits(state) == 4);
   assert(afterstates[id].count(state));
+  assert(afterstates[id][state][action]);
   state = afterstates[id][state][action];
+}
+
+void Graph::undo(std::pair<uint256_t, int>& piece, int action)
+{
+  move(piece, Action_END - action - 1); 
 }
