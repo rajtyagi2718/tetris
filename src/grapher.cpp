@@ -10,7 +10,7 @@
 using boost::multiprecision::uint256_t; 
 
 Grapher::Grapher()
-  : board{}, piece{}, states{}, afterstates{}
+  : board{}, piece{}, states{}, after_states{}
 {
 }
 
@@ -22,14 +22,14 @@ void Grapher::dfs()
     tops.clear();
     enumerate_tops();
 
-    afterstates.clear();
+    after_states.clear();
     states.clear();
     uint256_t state = piece->get_state();
 
     explore(state);
 
     std::sort(states.begin(), states.end());
-    write_afterstates(id);
+    write_after_states(id);
   }
 }
 
@@ -59,7 +59,7 @@ void Grapher::explore(uint256_t state)
 {
   assert(bitboard::countbits(state) == 4);
   states.push_back(state);
-  afterstates[state];  // initialize to zeros
+  after_states[state];  // initialize to zeros
   uint256_t afterstate = 0;
 
   if (!piece->is_bottom())
@@ -67,11 +67,11 @@ void Grapher::explore(uint256_t state)
     forward(down); 
     afterstate = piece->get_state();
     assert(bitboard::countbits(afterstate) == 4);
-    if (!afterstates.count(afterstate))
+    if (!after_states.count(afterstate))
     {
       explore(afterstate);
     }
-    afterstates[state][down] = afterstate; 
+    after_states[state][down] = afterstate; 
     backward(down);
     assert(state == piece->get_state());
   }
@@ -84,18 +84,18 @@ void Grapher::explore(uint256_t state)
   {
     forward(action); 
     afterstate = piece->get_state();
-    afterstates[state][action] = afterstate; 
+    after_states[state][action] = afterstate; 
     assert(bitboard::countbits(afterstate) == 4);
     if (board.is_valid(afterstate))
     {
-      if (!afterstates.count(afterstate))
+      if (!after_states.count(afterstate))
       {
         explore(afterstate);
       }
     }
     else
     {
-      afterstates[afterstate][Action_END - action - 1] = state;
+      after_states[afterstate][Action_END - action - 1] = state;
       states.push_back(afterstate);
     }
     backward(action);
@@ -107,11 +107,11 @@ void Grapher::explore(uint256_t state)
     forward(up); 
     afterstate = piece->get_state();
     assert(bitboard::countbits(afterstate) == 4);
-    if (!afterstates.count(afterstate))
+    if (!after_states.count(afterstate))
     {
       explore(afterstate);
     }
-    afterstates[state][up] = afterstate; 
+    after_states[state][up] = afterstate; 
     backward(up);
     assert(state == piece->get_state());
   }
@@ -121,8 +121,8 @@ void Grapher::explore_floor(uint256_t state)
 {
   uint256_t afterstate = down_state(state);  
   assert(bitboard::countbits(afterstate) == 4);
-  afterstates[state][down] = afterstate; 
-  afterstates[afterstate][up] = state;
+  after_states[state][down] = afterstate; 
+  after_states[afterstate][up] = state;
   states.push_back(afterstate);
 }
 
@@ -147,9 +147,9 @@ void Grapher::backward(int action)
   assert(piece->is_valid());
 }
 
-void Grapher::write_afterstates(int id)
+void Grapher::write_after_states(int id)
 {
-  std::string file_name {"build/afterstates_"};
+  std::string file_name {"build/after_states_"};
   file_name += std::to_string(id) + ".txt";
   std::ofstream file {file_name};
  
@@ -158,7 +158,7 @@ void Grapher::write_afterstates(int id)
     for (const auto& state : states)
     {
       file << state;
-      for (const auto& afterstate : afterstates[state])
+      for (const auto& afterstate : after_states[state])
       {
         file << ' ' << afterstate;
       } 
@@ -168,7 +168,7 @@ void Grapher::write_afterstates(int id)
   }
   else
   {
-    assert(false && "failed to open afterstates file");
+    assert(false && "failed to open after_states file");
   } 
   std::cout << file_name << " write complete." << std::endl;
 }

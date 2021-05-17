@@ -23,7 +23,7 @@ private:
   Board board; 
   std::unique_ptr<Piece> piece; 
   std::vector<uint256_t> states;
-  std::map<uint256_t, std::array<uint256_t, Action_END>> afterstates;
+  std::map<uint256_t, std::array<uint256_t, Action_END>> after_states;
   std::set<uint256_t> tops;
 
   void enumerate_tops();
@@ -32,7 +32,7 @@ private:
   void forward(int action);
   void backward(int action);
 
-  void write_afterstates(int id);
+  void write_after_states(int id);
 };
 
 #endif  // GRAPHER_H

@@ -18,8 +18,8 @@ RandomAgent::RandomAgent()
 }
 
 int RandomAgent::act(uint256_t state,
-                     std::pair<uint256_t, int> piece, 
-                     std::pair<uint256_t, int> next_piece)
+                     std::pair<uint256_t, int> cur_piece, 
+                     std::pair<uint256_t, int> nex_piece)
 {
   static std::random_device rd; 
   static std::mt19937 gen(rd());
@@ -34,17 +34,15 @@ SearchAgent::SearchAgent()
 }
 
 int SearchAgent::act(uint256_t state,
-                     std::pair<uint256_t, int> piece, 
-                     std::pair<uint256_t, int> next_piece)
+                     std::pair<uint256_t, int> cur_piece, 
+                     std::pair<uint256_t, int> nex_piece)
 {
-  return 0;
   if (actions.empty())
   {
-    // searchgame.search(state, piece, next_piece);
+    search.run(state, cur_piece, nex_piece, actions);
     assert(!actions.empty());
   } 
-  auto [piece_state, ret] = actions.back();
-  assert(piece.first == piece_state);
+  int ret = actions.back();
   actions.pop_back();
   return ret;
 }

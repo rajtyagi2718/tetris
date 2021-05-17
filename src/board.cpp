@@ -25,9 +25,10 @@ const uint256_t& Board::get_state() const
   return state;
 }
 
-void Board::reset()
+void Board::reset(uint256_t new_state)
 {
-  this->state = bitboard::board;
+  this->state = new_state;
+  // state = bitboard::board;
 }
 
 std::ostream& operator<<(std::ostream& os, const Board& board)
@@ -59,6 +60,11 @@ bool Board::try_add(const uint256_t& piece)
 void Board::remove(const uint256_t& piece)
 {
   state &= ~piece;
+}
+
+uint256_t Board::get_after_state(const uint256_t& piece)
+{
+  return state | piece;
 }
 
 int Board::clear_lines()
