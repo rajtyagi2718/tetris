@@ -2,7 +2,9 @@
 #define GRAPHICSGAME_H
 
 #include "../include/graphics.h"  // Bitmap
+#include "../include/board.h"
 #include "../include/game.h"      // Game
+#include "../include/graph.h"
 #include <SFML/Graphics.hpp>      // sf::RenderWindow
 
 //template<Element TAgent>
@@ -10,7 +12,7 @@ template<typename TAgent>
 class GraphicsGame : public Game<TAgent>
 {
 public:
-  GraphicsGame(TAgent& agent, Board board, std::ostream& os);
+  GraphicsGame(TAgent& agent, Board& board, Graph& graph, std::ostream& os);
   using Game<TAgent>::play;
   
 private:
@@ -22,6 +24,7 @@ private:
   // using Game<TAgent>::Game;
   // using Game<TAgent>::agent;
   using Game<TAgent>::board;
+  using Game<TAgent>::graph;
   using Game<TAgent>::os;
   // using Game<TAgent>::curpiece;
   // using Game<TAgent>::nexpiece;

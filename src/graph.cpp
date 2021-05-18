@@ -48,7 +48,6 @@ Graph::Graph()
 
 std::pair<uint256_t, int> Graph::spawn()
 {
-  return {spawn_states[0], 0};
   int id = distrib(gen);
   return {spawn_states[id], id};
 }

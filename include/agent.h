@@ -42,7 +42,8 @@ class SearchAgent : public Agent
 
   private:
     Search search;
-    std::vector<int> actions;
+    std::vector<std::pair<uint256_t, int>> actions;
+    // std::vector<int> actions;
 };
 
 #endif  // AGENT_H

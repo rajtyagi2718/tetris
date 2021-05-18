@@ -42,7 +42,18 @@ int SearchAgent::act(uint256_t state,
     search.run(state, cur_piece, nex_piece, actions);
     assert(!actions.empty());
   } 
-  int ret = actions.back();
+  auto [expected_state, action] = actions.back();
+  /*
+  if (expected_state != state)
+  {
+    std::cout << "expected_state" << std::endl;
+    bitboard::print(std::cout, expected_state);
+    std::cout << std::endl;
+    assert(false);
+  }
+  */
+  assert(expected_state == state);
+  // int ret = actions.back();
   actions.pop_back();
-  return ret;
+  return action;
 }

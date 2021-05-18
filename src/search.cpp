@@ -47,8 +47,15 @@ Search::Search()
 void Search::run(uint256_t board_state,
                  std::pair<uint256_t, int> cur_piece,
                  std::pair<uint256_t, int> nex_piece,
-                 std::vector<int>& actions)
+                 std::vector<std::pair<uint256_t, int>>& actions)
 {
+  /*
+  std::cout << "search board" << std::endl;
+  bitboard::print(std::cout, board_state);
+  std::cout << "search piece" << std::endl;
+  bitboard::print(std::cout, cur_piece.first);
+  std::cout << std::endl;
+  */
   reset(board_state, cur_piece, nex_piece);
   explore();
   select();
@@ -165,27 +172,29 @@ void Search::select()
   assert(best_nex_index != -1);
 }
 
-void Search::set_actions(std::vector<int>& actions)
+void Search::set_actions(std::vector<std::pair<uint256_t, int>>& actions)
 {
   int i = best_cur_index;
   int j = best_nex_index;
   backtrack(actions, cur_piece, cur_terminal_states[i], cur_after_states); 
 }
 
-void Search::backtrack(std::vector<int>& actions,
+void Search::backtrack(std::vector<std::pair<uint256_t, int>>& actions,
                        std::pair<uint256_t,int>& piece,
                        uint256_t state, std::map<uint256_t, int>& after_states)
 {
+  board.reset(board_state);
+  board.remove(cur_piece.first);
+
   auto& [start_state, id] = piece;
   int action = down;
-  actions.push_back(action);
+  actions.push_back({board.get_after_state(state), action});
   while (state != start_state)
   {
     action = after_states[state];
-    actions.push_back(action);
     state = graph.get_before_state(state, id, action);
+    actions.push_back({board.get_after_state(state), action});
   } 
-  actions.push_back(after_states[state]);
 }
 
 double Search::evaluate(uint256_t board_state, int cur_line_clear)

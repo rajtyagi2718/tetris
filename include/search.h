@@ -22,7 +22,7 @@ public:
   void run(uint256_t board_state,
            std::pair<uint256_t, int> cur_piece,
            std::pair<uint256_t, int> nex_piece,
-           std::vector<int>& actions);
+           std::vector<std::pair<uint256_t, int>>& actions);
 
 private:
   Board board; 
@@ -54,8 +54,9 @@ private:
            std::vector<uint256_t>& terminal_states,
            std::vector<uint256_t>& board_states);
   void select();
-  void set_actions(std::vector<int>& actions);
-  void backtrack(std::vector<int>& actions, std::pair<uint256_t,int>& piece,
+  void set_actions(std::vector<std::pair<uint256_t, int>>& actions);
+  void backtrack(std::vector<std::pair<uint256_t, int>>& actions, 
+                 std::pair<uint256_t,int>& piece,
                  uint256_t state, std::map<uint256_t, int>& after_states);
   double evaluate(uint256_t board_state, int cur_line_clear);
 };
