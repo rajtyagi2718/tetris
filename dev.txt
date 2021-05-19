@@ -1,7 +1,7 @@
 
 TODO
   search
-    backtrack only cur_piece
+    save best_nex_after_states, best_nex_terminal_states
 
   make
   const auto &

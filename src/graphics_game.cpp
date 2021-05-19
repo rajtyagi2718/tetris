@@ -13,11 +13,11 @@ GraphicsGame<TAgent>::GraphicsGame(TAgent& agent, Board& board, Graph& graph, st
   : Game<TAgent>{agent, board, graph, os},
     bitmap{sf::Vector2i(32, 32), 11, 23},
     window{sf::VideoMode(352, 736), "tetris"},
-    rendertime{sf::seconds(0.01111111f)}
+    // rendertime{sf::seconds(0.01111111f)}
     // rendertime{sf::seconds(0.01666666f)}
     // rendertime{sf::seconds(0.03333333f)}
     // rendertime{sf::seconds(0.11111111f)}
-    // rendertime{sf::seconds(1)}
+    rendertime{sf::seconds(1)}
 {
 }
 

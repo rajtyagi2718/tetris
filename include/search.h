@@ -4,9 +4,9 @@
 #include "board.h"
 #include "graph.h"
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <vector>   // vector
-#include <unordered_map>  // unordered_map 
-#include <set>      // set
+#include <vector>
+#include <unordered_map>
+#include <set>
 #include <utility>  // pair
 #include <memory>   // unique_ptr
 
@@ -32,15 +32,11 @@ private:
 
   std::map<uint256_t, int> cur_after_states;
   std::vector<uint256_t> cur_terminal_states;
-  std::vector<int> cur_line_clears;
-  std::vector<uint256_t> cur_board_states;
-  std::vector<std::map<uint256_t, int>> nex_after_states;
-  std::vector<std::vector<uint256_t>> nex_terminal_states;
-  std::vector<std::vector<uint256_t>> nex_board_states;
+  std::map<uint256_t, int> nex_after_states;
+  std::vector<uint256_t> nex_terminal_states;
 
   double best_value;
-  int best_cur_index;
-  int best_nex_index;
+  uint256_t best_terminal_state;
 
   void reset(uint256_t board_state,
              std::pair<uint256_t, int> cur_piece,
@@ -48,13 +44,10 @@ private:
   void explore();
   void bfs(std::pair<uint256_t, int>& piece,
            std::map<uint256_t, int>& after_states,
-           std::vector<uint256_t>& terminal_states,
-           std::vector<uint256_t>& board_states);
-  void select();
-  void set_actions(std::vector<int>& actions);
-  void backtrack(std::vector<int>& actions, std::pair<uint256_t,int>& piece,
-                 uint256_t state, std::map<uint256_t, int>& after_states);
+           std::vector<uint256_t>& terminal_states);
+  void update_best(uint256_t& cur_terminal_state, int lines);
   double evaluate(uint256_t board_state, int cur_line_clear);
+  void backtrack(std::vector<int>& actions);
 };
 
 #endif  // SEARCH_H
