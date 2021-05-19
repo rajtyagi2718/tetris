@@ -1,10 +1,16 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include "ids.h"   // PieceId
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <vector>                            // vector
+#include <vector>
 #include <memory>                            // unique_ptr
 
+// dynamically create, move pieces for grapher
+// reduced to (state, id) pair in game, graph
+
+namespace make_graph
+{
 using boost::multiprecision::uint256_t;
 
 class Piece
@@ -33,7 +39,7 @@ protected:
   Piece(uint256_t r);  
 
 private:
-  unsigned int rot;  // getter %
+  unsigned int rot;
   unsigned int num_rot;
   std::vector<uint256_t> rotations;
 };
@@ -80,12 +86,11 @@ public:
   IPiece();
 };
 
-enum PieceId {tpiece, jpiece, zpiece, opiece, spiece, lpiece, ipiece, PieceId_END};
-
 std::unique_ptr<Piece> spawn_piece(int id);
 
 uint256_t down_state(uint256_t& state);
 uint256_t left_state(uint256_t& state);
 uint256_t right_state(uint256_t& state);
+}  // namespace make_graph
 
 #endif  // PIECE_H

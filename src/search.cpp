@@ -2,7 +2,7 @@
 #include "../include/graph.h"
 #include "../include/search.h"
 #include "../include/features.h"    // values
-
+#include "../include/ids.h"         // Action
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <vector>
 #include <queue>
@@ -10,8 +10,7 @@
 #include <algorithm>                // copy max_element
 #include <iterator>                 // back_inserter
 #include <cassert>                  // assert
-
-#include <fstream>
+#include <fstream>                  // ifstream
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -47,20 +46,13 @@ Search::Search()
 void Search::run(uint256_t board_state,
                  std::pair<uint256_t, int> cur_piece,
                  std::pair<uint256_t, int> nex_piece,
-                 std::vector<std::pair<uint256_t, int>>& actions)
+                 std::vector<int>& actions)
 {
-  /*
-  std::cout << "search board" << std::endl;
-  bitboard::print(std::cout, board_state);
-  std::cout << "search piece" << std::endl;
-  bitboard::print(std::cout, cur_piece.first);
-  std::cout << std::endl;
-  */
   reset(board_state, cur_piece, nex_piece);
   explore();
   select();
   set_actions(actions);
-  std::cout << "search value: " << best_value << std::endl;
+  // std::cout << "search value: " << best_value << std::endl;
 }
 
 void Search::reset(uint256_t board_state,
@@ -89,9 +81,6 @@ void Search::explore()
   board.reset(board_state);
   board.remove(cur_piece.first);
   bfs(cur_piece, cur_after_states, cur_terminal_states, cur_board_states);
-  assert(!cur_after_states.empty());
-  assert(!cur_terminal_states.empty());
-  assert(cur_terminal_states.size() == cur_board_states.size());
 
   for (auto cur_board_state : cur_board_states)
   {
@@ -103,14 +92,7 @@ void Search::explore()
     nex_board_states.push_back({});
     bfs(nex_piece, nex_after_states.back(), nex_terminal_states.back(),
         nex_board_states.back()); 
-    assert(!nex_after_states.back().empty());
-    assert(!nex_terminal_states.back().empty());
-    assert(!nex_board_states.back().empty());
   }
-
-  assert(cur_terminal_states.size() == nex_terminal_states.size());
-  assert(cur_terminal_states.size() == nex_after_states.size());
-  assert(cur_terminal_states.size() == nex_board_states.size());
 }
 
 void Search::bfs(std::pair<uint256_t, int>& piece,
@@ -126,7 +108,7 @@ void Search::bfs(std::pair<uint256_t, int>& piece,
   {
     uint256_t state = states.front();
     states.pop();
-    assert(board.is_valid(state));
+    // assert(board.is_valid(state));
     uint256_t after_state;
     for (int action = 1; action < Action_END-1; ++action)
     {
@@ -167,19 +149,19 @@ void Search::select()
     } 
   }
 
-  assert(best_value != -1e6);
-  assert(best_cur_index != -1);
-  assert(best_nex_index != -1);
+  // assert(best_value != -1e6);
+  // assert(best_cur_index != -1);
+  // assert(best_nex_index != -1);
 }
 
-void Search::set_actions(std::vector<std::pair<uint256_t, int>>& actions)
+void Search::set_actions(std::vector<int>& actions)
 {
   int i = best_cur_index;
   int j = best_nex_index;
   backtrack(actions, cur_piece, cur_terminal_states[i], cur_after_states); 
 }
 
-void Search::backtrack(std::vector<std::pair<uint256_t, int>>& actions,
+void Search::backtrack(std::vector<int>& actions,
                        std::pair<uint256_t,int>& piece,
                        uint256_t state, std::map<uint256_t, int>& after_states)
 {
@@ -188,12 +170,12 @@ void Search::backtrack(std::vector<std::pair<uint256_t, int>>& actions,
 
   auto& [start_state, id] = piece;
   int action = down;
-  actions.push_back({board.get_after_state(state), action});
+  actions.push_back(action);
   while (state != start_state)
   {
     action = after_states[state];
     state = graph.get_before_state(state, id, action);
-    actions.push_back({board.get_after_state(state), action});
+    actions.push_back(action);
   } 
 }
 
@@ -211,42 +193,3 @@ double Search::evaluate(uint256_t board_state, int cur_line_clear)
   }
   return ret;
 }
-
-/*
-void Search::search(uint256_t boardint, int curpieceid, int nexpieceid,
-                        std::vector<std::pair<uint256_t, int>>& actions)
-{
-  reset(boardint, curpieceid);
-  dfs();
-
-  prepaths = std::move(paths);
-  
-  for (auto& [prepath, prevalue] : prepaths)
-  {
-    reset(prepath.back().first, nexpieceid); 
-    int lines = board.clearlines();
-    dfs();
-    auto bestpath = std::max_element(paths.cbegin(), paths.cend(),
-      [](const auto& x, const auto& y) { return x.second < y.second; });
-    prevalue = bestpath->second;
-    if (lines)
-    {
-      prevalue += lines * weights[0];
-    }
-  }
-
-  paths = std::move(prepaths);
-
-  bestactions(actions); 
-}
-
-void Search::bestactions(std::vector<std::pair<uint256_t, int>>& actions)
-{
-  // assert(!paths.empty());
-  auto path = std::max_element(paths.cbegin(), paths.cend(),
-    [](const auto& x, const auto& y) { return x.second < y.second; });
-  std::copy(path->first.crbegin(), path->first.crend(),
-            std::back_inserter(actions));
-  std::cout << "value " << path->second << std::endl;
-}
-*/

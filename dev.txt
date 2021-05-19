@@ -1,28 +1,13 @@
 
-
-
 TODO
+  search
+    backtrack only cur_piece
 
-game
-  pass piece [state, id]
-
-
-search
-  bfs start to terminal states
-    unordered_map: afterstate -> state, action
-    vector: index -> (terminalstate, value)
-  max terminalstate by value
-  backtrack path
-    (terminalstate, null), (state, action), ... (startstate, action) 
-
-  
-central scheduling
-order for ct scan
-
-
-4:30
-
-2:30
+  make
+  const auto &
+  gtests
+  features bits
+  search profile
 
 
 
@@ -37,19 +22,9 @@ g++ -std=c++17 ../build/exception.o ../build/bitboard.o ../build/board.o ../buil
 
 g++ -std=c++17 main.o ../build/exception.o exceptiontest.o ../build/bitboard.o bitboardtest.o ../build/board.o boardtest.o ../build/piece.o piecetest.o ../build/agent.o agenttest.o ../build/game.o gametest.o ../build/graphics.o ../build/graphicsgame.o graphicsgametest.o ../build/searchgame.o searchgametest.o -lsfml-graphics -lsfml-window -lsfml-system -lgtest -lgtest_main -pthread -o alltests
 
-TODO
-  searchgame
-    check valid piece
   
 
 TODO Search.cache
-  unique paths
-    set uint256_t
-    integrate SearchAgent
-
-  shortest unique paths
-    map uint256_t -> stack or paths address
-
   path to best end state
     < 4*20*10 states
     filter disjoint from board and !fall
@@ -61,27 +36,24 @@ TODO Search.cache
       shortest path
       least moves
 
-TODO rename lowerlower -> lower_lower
-  
-class equality ??
-
 reacheable piece end states
 
-heights holes bumpiness
-
-board
-  bitboard
-  bitpiece
-
-game 
-  board
-    piece
-  agent
-    search
-
-ai
-  enumerate piece end states
-  graph search reacheable end states
-  evaluate end states
-    clears heights holes overhangs ditches bumpiness
   
+
+
+create_graph: bitboard.o board.o piece.o grapher.o
+	g++ -std=c++17 build/bitboard.o build/board.o build/piece.o build/grapher.o src/create_graph.cpp -o build/create_graph
+
+bitboard.o:
+	g++ -std=c++17 -c src/bitboard.cpp -o build/bitboard.o
+
+board.o:
+	g++ -std=c++17 -c src/board.cpp -o build/board.o
+
+piece.o:
+	g++ -std=c++17 -c src/piece.cpp -o build/piece.o
+
+grapher.o:
+	g++ -std=c++17 -c src/grapher.cpp -o build/grapher.o
+
+build/create_graph

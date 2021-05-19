@@ -2,19 +2,21 @@
 #define AGENT_H
 
 #include "search.h"
-#include <boost/multiprecision/cpp_int.hpp>    // uint256_t
-#include <vector>                              // vector #include <utility>                             // pair
-#include <string>                              // string
-#include <sstream>                             // ostream
+#include <boost/multiprecision/cpp_int.hpp>  // uint256_t
+#include <vector>
+#include <utility>                           // pair
+#include <string>
+
+// provide action during game play
+// receive game board state, current piece, next piece
 
 using boost::multiprecision::uint256_t;
-
-// enum Action {null, rotateleft, left, right, rotateright, Action_END};
 
 class Agent
 {
 public:
   Agent(std::string);
+  friend std::ostream& operator<<(std::ostream& os, const Agent& agent);
   virtual int act(uint256_t state,
                   std::pair<uint256_t, int> cur_piece, 
                   std::pair<uint256_t, int> nex_piece) = 0;
@@ -42,8 +44,7 @@ class SearchAgent : public Agent
 
   private:
     Search search;
-    std::vector<std::pair<uint256_t, int>> actions;
-    // std::vector<int> actions;
+    std::vector<int> actions;
 };
 
 #endif  // AGENT_H

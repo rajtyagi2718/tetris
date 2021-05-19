@@ -1,9 +1,9 @@
-#include "../include/board.h"                // Board
+#include "../include/board.h"
 #include "../include/bitboard.h"             // print
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <ostream>                           // ostream
-#include <string>                            // string
-#include <vector>                            // vector
+#include <ostream>
+#include <string>
+#include <vector>
 
 Board::Board()
   : state{bitboard::board}
@@ -15,20 +15,14 @@ Board::Board(uint256_t state)
 {
 }
 
-uint256_t Board::get_state()
-{
-  return state;
-}
-
 const uint256_t& Board::get_state() const
 {
   return state;
 }
 
-void Board::reset(uint256_t new_state)
+void Board::reset(uint256_t state)
 {
-  this->state = new_state;
-  // state = bitboard::board;
+  this->state = state;
 }
 
 std::ostream& operator<<(std::ostream& os, const Board& board)
@@ -93,7 +87,7 @@ int Board::clear_lines()
   {
     if ((state & line) == line)
     {
-      // above board shifted down union below board
+      // top half shifted down union with bottom half
       state = ((state & upper) << width) | (state & ~line & ~upper);
       count++;
     }

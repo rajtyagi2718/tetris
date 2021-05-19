@@ -2,6 +2,6 @@
 
 int main()
 {
-  Grapher grapher {};
-  grapher.dfs();
+  make_graph::Grapher grapher {};
+  grapher.make();
 }

@@ -4,8 +4,8 @@
 #include <memory>                            // unique_ptr make_unique
 #include <cassert>                           // assert
 
-#include <iostream>
-
+namespace make_graph
+{
 Piece::Piece(uint256_t r0, uint256_t r1, uint256_t r2, uint256_t r3)  
   : rot{0}, num_rot{4}, rotations{r0, r1, r2, r3}
 {
@@ -82,11 +82,6 @@ void Piece::up()
 bool Piece::is_top() const
 {
   return !!(get_state() & bitboard::top);
-  /*
-  uint256_t upper {bitboard::line}; 
-  upper = upper | (upper << bitboard::width);
-  return !(get_state() & ~upper);
-  */
 }
 
 bool Piece::is_bottom() const
@@ -101,9 +96,9 @@ bool Piece::is_floor() const
 
 bool Piece::is_valid() const
 {
-  for (auto x : rotations)
+  for (auto state : rotations)
   {
-    if (bitboard::countbits(x) != 4)
+    if (bitboard::count_bits(state) != 4)
     {
       return false;
     }
@@ -178,3 +173,4 @@ uint256_t right_state(uint256_t& state)
 { 
   return state << 1;
 }
+}  // namespace make_graph

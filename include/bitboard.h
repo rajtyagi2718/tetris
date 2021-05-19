@@ -2,7 +2,7 @@
 #define BITBOARD_H
 
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <vector>                            // vector
+#include <vector>
 
 namespace bitboard
 {
@@ -12,9 +12,9 @@ extern const int width;
 extern const int length;
 extern const int offset;
 
-std::ostream& print(std::ostream& os, const uint256_t& bigint);
-std::vector<unsigned char> uint256tobitvec(const uint256_t& bigint);
-int countbits(uint256_t bigint);
+std::ostream& print(std::ostream& os, const uint256_t& state);
+std::vector<unsigned char> to_bits(const uint256_t& state);
+int count_bits(uint256_t state);
 
 // BOARD
 // 20x10 play field
@@ -55,7 +55,7 @@ extern const uint256_t ipiece1;
 
 namespace internal
 {
-uint256_t bitvectouint256(std::vector<unsigned char> bitvec);
+uint256_t to_int(std::vector<unsigned char> bits);
 }  // namespace internal
 }  // namespace bitboard
 

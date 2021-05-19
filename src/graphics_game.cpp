@@ -1,13 +1,12 @@
 #include "../include/graphics_game.h"
-#include "../include/graphics.h"
-#include "../include/game.h"
-#include "../include/agent.h"
+#include "../include/bitboard.h"
 #include "../include/board.h"
 #include "../include/graph.h"
-#include "../include/bitboard.h"
-#include <ostream>                 // ostream
-#include <utility>                 // move
-#include <cassert>                 // assert
+#include "../include/agent.h"
+#include "../include/game.h"
+#include "../include/graphics.h"
+#include <ostream>
+#include <utility>  // move
 
 template<typename TAgent>
 GraphicsGame<TAgent>::GraphicsGame(TAgent& agent, Board& board, Graph& graph, std::ostream& os)
@@ -25,10 +24,7 @@ GraphicsGame<TAgent>::GraphicsGame(TAgent& agent, Board& board, Graph& graph, st
 template<typename TAgent>
 void GraphicsGame<TAgent>::render()
 {
-  static int counter = 0;
-  counter++;
-  // os << "render: " << counter << '\t';
-  bitmap.load(bitboard::uint256tobitvec(board.get_state()));
+  bitmap.load(bitboard::to_bits(board.get_state()));
   window.clear();
   window.draw(bitmap);
   window.display();

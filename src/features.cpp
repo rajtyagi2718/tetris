@@ -1,4 +1,4 @@
-#include "../include/features.h"  // features
+#include "../include/features.h"
 #include "../include/bitboard.h"  // width length line block
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <vector>     // vector
@@ -11,7 +11,7 @@ namespace features
 std::vector<double> values(uint256_t state, int pre_clears)
 {
   return {clears(state) + pre_clears,
-          height(state), bumps(boardint), holes(boardint)};
+          height(state), bumps(state), holes(state)};
 }
 
 int clears(uint256_t state)

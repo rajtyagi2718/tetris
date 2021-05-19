@@ -3,21 +3,21 @@
 
 #include "bitboard.h"
 #include "board.h"
-#include "piece.h"
+#include "ids.h"    // Action PieceId
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <map>
 #include <vector>
-#include <random>  // random_device mt19937 uniform_int_distribution
+#include <random>   // random_device mt19937 uniform_int_distribution
 #include <utility>  // pair
+
+// dynamically create piece (state, id) pairs 
+// quickly map (state, id, action) triples to adjacent states
+// read graph from file
 
 using boost::multiprecision::uint256_t;
 
 class Graph
 {
-// TODO Action enum duplicate Grapher, Graph, Agent classes
-enum Action {down, rotate_left, left, right, rotate_right, up, Action_END};
-enum PieceId {tpiece, jpiece, zpiece, opiece, spiece, lpiece, ipiece, PieceId_END};
-
 public:
   Graph();
   std::pair<uint256_t, int> spawn();

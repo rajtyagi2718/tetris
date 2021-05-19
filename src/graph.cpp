@@ -1,5 +1,6 @@
 #include "../include/graph.h"
 #include "../include/bitboard.h"
+#include "../include/ids.h"                  // Action PieceId
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <string>
 #include <fstream>  // ifstream
@@ -13,6 +14,7 @@ Graph::Graph()
                  bitboard::ipiece0},
     gen{rd()}, distrib(0, 6)
 {
+  // after_states_(id).txt : state, after_state, ..., after_state, \n
   std::string file_name {"../build/after_states_"};
   for (int id = 0; id < PieceId_END; id++)
   {
@@ -55,7 +57,7 @@ std::pair<uint256_t, int> Graph::spawn()
 void Graph::move(std::pair<uint256_t, int>& piece, int action)
 {
   auto& [state, id] = piece;
-  assert(bitboard::countbits(state) == 4);
+  assert(bitboard::count_bits(state) == 4);
   assert(after_states[id].count(state));
   assert(after_states[id][state][action]);
   state = after_states[id][state][action];
@@ -68,7 +70,7 @@ void Graph::undo(std::pair<uint256_t, int>& piece, int action)
 
 uint256_t Graph::get_after_state(uint256_t state, int id, int action)
 {
-  assert(bitboard::countbits(state) == 4);
+  assert(bitboard::count_bits(state) == 4);
   assert(after_states[id].count(state));
   assert(after_states[id][state][action]);
   return after_states[id][state][action];

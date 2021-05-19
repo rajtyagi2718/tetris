@@ -2,7 +2,7 @@
 #define FEATURES_H 
 
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
-#include <vector>  // vector
+#include <vector>
 
 namespace features
 {

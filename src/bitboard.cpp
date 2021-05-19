@@ -1,23 +1,23 @@
-#include "../include/bitboard.h"             // 
-#include <boost/multiprecision/cpp_int.hpp>  // uint256_t export_bits import_bits
-#include <ostream>                           // ostream 
-#include <string>                            // string
-#include <vector>                            // vector
-#include <algorithm>                         // min
-#include <iterator>                          // back_inserter
-#include <iostream>
+#include "../include/bitboard.h"
+#include <boost/multiprecision/cpp_int.hpp> // uint256_t export_bits import_bits
+#include <ostream>
+#include <string>
+#include <vector>
+#include <algorithm>  // min
+#include <iterator>   // back_inserter
 
 namespace bitboard
 {
 const int width  = 11;
 const int length = 23;
 const int offset = 2;
+const int trail = 1;
 
-std::ostream& print(std::ostream& os, const uint256_t& bigint)
+std::ostream& print(std::ostream& os, const uint256_t& state)
 {
-  std::vector<unsigned char> bitvec = uint256tobitvec(bigint);
+  std::vector<unsigned char> bits = to_bits(state);
   int curwidth = 11;
-  for (auto it = bitvec.crbegin(); it != bitvec.crend(); it++)
+  for (auto it = bits.crbegin() + trail; it != bits.crend(); it++)
   {
     os << ((*it) ? "o " : "  ");
     if (!(--curwidth))
@@ -29,28 +29,28 @@ std::ostream& print(std::ostream& os, const uint256_t& bigint)
   return os; 
 }
 
-std::vector<unsigned char> uint256tobitvec(const uint256_t& bigint)
+std::vector<unsigned char> to_bits(const uint256_t& state)
 {
-  std::vector<unsigned char> bitvec {};
-  boost::multiprecision::export_bits(bigint, std::back_inserter(bitvec), 1);
-  if (bitvec.size() >= offset)
+  std::vector<unsigned char> bits {};
+  boost::multiprecision::export_bits(state, std::back_inserter(bits), 1);
+  if (bits.size() >= offset)
   {
-    bitvec.erase(bitvec.end() - offset, bitvec.end());
+    bits.erase(bits.end() - offset, bits.end());
   }
-  return bitvec;
+  return bits;
 }
 
-int countbits(uint256_t bigint)
+int count_bits(uint256_t state)
 {
-  int ret;
-  for (ret = 0; bigint; ret++)
+  int ret = 0;
+  for (; state; ++ret)
   {
-    bigint &= bigint - 1;  // clear least significant bit
+    state &= state - 1;  // clear least significant bit
   }
   return ret;
 }
 
-const uint256_t board {internal::bitvectouint256(
+const uint256_t board {internal::to_int(
   {1, 1,
    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -77,48 +77,22 @@ const uint256_t board {internal::bitvectouint256(
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
    1})};
 
-const uint256_t block {internal::bitvectouint256(
+const uint256_t block {internal::to_int(
   {0, 0,
    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})};
 
-const uint256_t line {internal::bitvectouint256(
+const uint256_t line {internal::to_int(
   {0, 0,
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
 
-const uint256_t top {internal::bitvectouint256(
+const uint256_t top {internal::to_int(
   {0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
-
-const uint256_t bottom {internal::bitvectouint256(
-  {0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
 
-const uint256_t floor {internal::bitvectouint256(
+const uint256_t bottom {internal::to_int(
   {0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -142,129 +116,155 @@ const uint256_t floor {internal::bitvectouint256(
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
 
-const uint256_t tpiece0 {internal::bitvectouint256(
+const uint256_t floor {internal::to_int(
+  {0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})};
+
+const uint256_t tpiece0 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})}; 
 
-const uint256_t tpiece1 {internal::bitvectouint256(
+const uint256_t tpiece1 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})}; 
 
-const uint256_t tpiece2 {internal::bitvectouint256(
+const uint256_t tpiece2 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0})}; 
 
-const uint256_t tpiece3 {internal::bitvectouint256(
+const uint256_t tpiece3 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})}; 
 
-const uint256_t jpiece0 {internal::bitvectouint256(
+const uint256_t jpiece0 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0})}; 
 
-const uint256_t jpiece1 {internal::bitvectouint256(
+const uint256_t jpiece1 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0})}; 
 
-const uint256_t jpiece2 {internal::bitvectouint256(
+const uint256_t jpiece2 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0})}; 
 
-const uint256_t jpiece3 {internal::bitvectouint256(
+const uint256_t jpiece3 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})}; 
 
-const uint256_t zpiece0 {internal::bitvectouint256(
+const uint256_t zpiece0 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0})}; 
 
-const uint256_t zpiece1 {internal::bitvectouint256(
+const uint256_t zpiece1 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})}; 
 
-const uint256_t opiece0 {internal::bitvectouint256(
+const uint256_t opiece0 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0})}; 
 
-const uint256_t spiece0 {internal::bitvectouint256(
+const uint256_t spiece0 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0})}; 
 
-const uint256_t spiece1 {internal::bitvectouint256(
+const uint256_t spiece1 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0})}; 
 
-const uint256_t lpiece0 {internal::bitvectouint256(
+const uint256_t lpiece0 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0})}; 
 
-const uint256_t lpiece1 {internal::bitvectouint256(
+const uint256_t lpiece1 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0})}; 
 
-const uint256_t lpiece2 {internal::bitvectouint256(
+const uint256_t lpiece2 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
    0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0})}; 
 
-const uint256_t lpiece3 {internal::bitvectouint256(
+const uint256_t lpiece3 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0})}; 
 
-const uint256_t ipiece0 {internal::bitvectouint256(
+const uint256_t ipiece0 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0})}; 
 
-const uint256_t ipiece1 {internal::bitvectouint256(
+const uint256_t ipiece1 {internal::to_int(
   {0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
@@ -273,13 +273,12 @@ const uint256_t ipiece1 {internal::bitvectouint256(
 
 namespace internal
 {
-uint256_t bitvectouint256(std::vector<unsigned char> bitvec)
+uint256_t to_int(std::vector<unsigned char> bits)
 {
   uint256_t ret;
   // unsigned chunk_size = 1 bit
   // msv_first = false  i.e.  bigendian
-  boost::multiprecision::import_bits(
-    ret, bitvec.begin(), bitvec.end(), 1, false);
+  boost::multiprecision::import_bits(ret, bits.begin(), bits.end(), 1, false);
 
   return ret;
 }  
