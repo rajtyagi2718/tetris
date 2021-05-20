@@ -20,6 +20,7 @@ GraphicsGame<TAgent>::GraphicsGame(TAgent& agent, Board& board, Graph& graph, st
     // rendertime{sf::seconds(0.83333333f)}
     // rendertime{sf::seconds(1)}
 {
+  sf::sleep(sf::seconds(5));
 }
 
 template<typename TAgent>
