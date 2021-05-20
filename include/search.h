@@ -34,6 +34,8 @@ private:
   std::vector<uint256_t> cur_terminal_states;
   std::map<uint256_t, int> nex_after_states;
   std::vector<uint256_t> nex_terminal_states;
+  std::map<uint256_t, int> pre_after_states;
+  std::vector<uint256_t> pre_terminal_states;
 
   double best_value;
   uint256_t best_terminal_state;

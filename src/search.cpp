@@ -1,15 +1,15 @@
 #include "../include/search.h"
 #include "../include/board.h"
 #include "../include/graph.h"
-#include "../include/features.h"   // values
-#include "../include/ids.h"        // Action
+#include "../include/features.h"  // values
+#include "../include/ids.h"       // Action
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <vector>
 #include <queue>
-#include <utility>                 // pair
-#include <algorithm>               // max
-#include <cassert>                 // assert
-#include <fstream>                 // ifstream
+#include <utility>                // pair
+#include <algorithm>              // max
+#include <cassert>                // assert
+#include <fstream>                // ifstream
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -20,6 +20,7 @@ Search::Search()
   : board{}, graph{}, weights{},
     cur_after_states{}, cur_terminal_states{},
     nex_after_states{}, nex_terminal_states{},
+    pre_after_states{}, pre_terminal_states{},
     best_value{}, best_terminal_state{}
 {
   std::ifstream file {"../src/weights.txt"};
@@ -59,11 +60,21 @@ void Search::reset(uint256_t board_state,
   board.reset(board_state); 
   board.remove(cur_piece.first);
   this->board_state = board.get_state();
-  this->cur_piece = cur_piece;
-  this->nex_piece = nex_piece;
 
-  cur_after_states.clear();
-  cur_terminal_states.clear();
+  this->cur_piece = cur_piece;
+  if (cur_after_states.empty())
+  {
+    cur_after_states.clear();
+    cur_terminal_states.clear();
+    bfs(cur_piece, cur_after_states, cur_terminal_states);
+  }
+  else
+  {
+    cur_after_states = std::move(pre_after_states);
+    cur_terminal_states = std::move(pre_terminal_states);
+  }
+
+  this->nex_piece = nex_piece;
   nex_after_states.clear();
   nex_terminal_states.clear();
 
@@ -73,8 +84,6 @@ void Search::reset(uint256_t board_state,
 
 void Search::explore()
 {
-  bfs(cur_piece, cur_after_states, cur_terminal_states);
-
   for (auto cur_terminal_state : cur_terminal_states)
   {
     board.reset(board_state);
@@ -135,6 +144,8 @@ void Search::update_best(uint256_t& cur_terminal_state, int lines)
   {
     best_value = value;
     best_terminal_state = cur_terminal_state; 
+    pre_after_states = std::move(nex_after_states);
+    pre_terminal_states = std::move(nex_terminal_states);
   }
 }
 

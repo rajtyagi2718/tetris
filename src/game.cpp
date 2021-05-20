@@ -29,14 +29,22 @@ void Game<TAgent>::play()
   {
     if (!move() && !fall())
     {
-      lines += board.clear_lines();
+      int clears = board.clear_lines();
+      lines += clears;
+      os << '\n';
+      if (clears)
+      {
+        os << "clears=" << lines << std::endl;
+      }
+      // lines += board.clear_lines();
       if (!enqueue())
       {
         os << "terminal" << std::endl;
         terminal = true;
       }
     }
-    render(); } os << "lines=" << lines << std::endl;
+    render();
+  } 
 }
 
 template<typename TAgent>
@@ -54,7 +62,7 @@ bool Game<TAgent>::move()
   graph.move(piece, action); 
   if (board.try_add(piece.first))
   {
-    os << "action=" << action << std::endl;
+    // os << "action=" << action << std::endl;
     return true;
   }
   graph.undo(piece, action); 

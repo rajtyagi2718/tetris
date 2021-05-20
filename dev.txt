@@ -1,8 +1,6 @@
 
 TODO
-  search
-    save best_nex_after_states, best_nex_terminal_states
-
+  game snapshots
   make
   const auto &
   gtests

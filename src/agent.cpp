@@ -3,6 +3,7 @@
 #include <boost/multiprecision/cpp_int.hpp>  // uint256_t
 #include <string>
 #include <random>  // random_device mt19937 uniform_int_distribution
+#include <iostream>
 
 using boost::multiprecision::uint256_t;
 
@@ -46,8 +47,10 @@ int SearchAgent::act(uint256_t state,
   if (actions.empty())
   {
     search.run(state, cur_piece, nex_piece, actions);
+    std::cout << "actions: ";
   } 
   int ret = actions.back();
   actions.pop_back();
+  std::cout << ret << ' ';
   return ret;
 }
