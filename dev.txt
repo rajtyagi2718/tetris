@@ -1,9 +1,36 @@
 use cur, nex, and average all nex_nex pieces
 
 features:
-  shared get_heights
   holes: store bits set
   get heights: optimization?
+
+lock_game
+  lock_piece from agent
+  search only terminal states
+
+train_game
+  check enqueue, lock_act, lock_search(no board reset)
+  
+score_game
+  
+agent
+  playagent
+    randomplayagent
+    searchplayagent
+  lockagent
+    randomlockagent
+    searchlockagent
+
+game
+  playgame
+  lockgame
+
+search
+  playsearch
+  locksearch
+
+env
+  locksearchenv
 
 
 

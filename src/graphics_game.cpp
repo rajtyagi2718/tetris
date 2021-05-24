@@ -33,5 +33,5 @@ void GraphicsGame<TAgent>::render()
   sf::sleep(rendertime);
 }
 
-template class GraphicsGame<RandomAgent>;
-template class GraphicsGame<SearchAgent>;
+template class GraphicsGame<RandomPlayAgent>;
+template class GraphicsGame<SearchPlayAgent>;

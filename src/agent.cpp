@@ -18,39 +18,16 @@ std::ostream& operator<<(std::ostream& os, const Agent& agent)
   return os;
 }
 
-
-RandomAgent::RandomAgent()
-  : Agent("random")
+/*
+LockAgent::LockAgent()
+  : Agent("search"), search{}
 {
 }
 
-int RandomAgent::act(uint256_t state,
-                     std::pair<uint256_t, int> cur_piece, 
-                     std::pair<uint256_t, int> nex_piece)
+uint256_t LockAgent::act(uint256_t state,
+                         std::pair<uint256_t, int> cur_piece, 
+                         std::pair<uint256_t, int> nex_piece)
 {
-  static std::random_device rd; 
-  static std::mt19937 gen(rd());
-  static std::uniform_int_distribution<> distrib(0, 4);
-  return distrib(gen);
+  return search.run(state, cur_piece, nex_piece);
 }
-
-SearchAgent::SearchAgent()
-  : Agent("search"), actions{}
-{
-  actions.reserve(20);
-}
-
-int SearchAgent::act(uint256_t state,
-                     std::pair<uint256_t, int> cur_piece, 
-                     std::pair<uint256_t, int> nex_piece)
-{
-  if (actions.empty())
-  {
-    search.run(state, cur_piece, nex_piece, actions);
-    std::cout << "actions: ";
-  } 
-  int ret = actions.back();
-  actions.pop_back();
-  std::cout << ret << ' ';
-  return ret;
-}
+*/

@@ -7,7 +7,7 @@
 #include <utility>                           // pair
 #include <string>
 
-// provide action during game play
+// provide movement during game
 // receive game board state, current piece, next piece
 
 using boost::multiprecision::uint256_t;
@@ -15,36 +15,41 @@ using boost::multiprecision::uint256_t;
 class Agent
 {
 public:
-  Agent(std::string);
   friend std::ostream& operator<<(std::ostream& os, const Agent& agent);
-  virtual int act(uint256_t state,
-                  std::pair<uint256_t, int> cur_piece, 
-                  std::pair<uint256_t, int> nex_piece) = 0;
+
+protected:  // abstract class
+  Agent(std::string);
 
 private:
   std::string name; 
 };
 
-class RandomAgent : public Agent
+
+class SearchPlayAgent : public PlayAgent
 {
-  public:
-    RandomAgent();
-    int act(uint256_t state,
-            std::pair<uint256_t, int> cur_piece, 
-            std::pair<uint256_t, int> nex_piece) override;
+public:
+  SearchPlayAgent();
+  int act(uint256_t state,
+          std::pair<uint256_t, int> cur_piece, 
+          std::pair<uint256_t, int> nex_piece) override;
+
+private:
+  PlaySearch search;
+  std::vector<int> actions;
 };
 
-class SearchAgent : public Agent
+/*
+class LockAgent : public Agent
 {
-  public:
-    SearchAgent();
-    int act(uint256_t state,
-            std::pair<uint256_t, int> cur_piece, 
-            std::pair<uint256_t, int> nex_piece) override;
+public:
+  LockAgent();
+  uint256_t act(uint256_t state,
+                std::pair<uint256_t, int> cur_piece, 
+                std::pair<uint256_t, int> nex_piece);
 
-  private:
-    Search search;
-    std::vector<int> actions;
+private:
+  LockSearch search;
 };
+*/
 
 #endif  // AGENT_H
