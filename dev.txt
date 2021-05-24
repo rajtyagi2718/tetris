@@ -1,12 +1,64 @@
+use cur, nex, and average all nex_nex pieces
+
+features:
+  shared get_heights
+  holes: store bits set
+  get heights: optimization?
+
+
 
 TODO
+  competition
+  stats
+    optimize play for nes ntsc scoring
+    levels: 18 ... 28
+    line clears per level: 130 140 ... 190 200 200 200 200
+    points: 40, 100, 300, 1200 * (level + 1) 
+    total lines: 1920
+    total pieces: 5000 > (1920*10+200) / 4
+  train
+    search 
+      features vector input
+      no actions, no afterstates, no backtrack
+      only terminal states
+    game
+      stats
+        level
+        lines
+        transition
+        pieces
+      score
+      piece_queue
+  capture
+    game
+      piece, actions saved 
+    graphics game
+      colors
+      next piece 
+
+Q Learning
+  board, cur_piece, nex_piece -> 
+  lines, nex_board, nex_piece, nex_nex_piece ->
+  features ->
+  values
+
+sample_game 
+  piece_ids = [char, ... ]
+  cur_boards = [uint256_t, ...]
+  nex_boards [[uint256_t, ...], ...]
+  q(nex_board, weights) -> reward
+    lines, after_state -> features -> value
+
+piece_ids, weights, e-greedy -> cur_boards, nex_boards, lines
+     
+
+
   game snapshots
   make
   const auto &
   gtests
   features bits
   search profile
-
 
 
 
