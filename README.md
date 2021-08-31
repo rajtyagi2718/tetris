@@ -1,7 +1,7 @@
 # Tetris Solver
 
 ## Complexity
-Tetris can be formulated as a graph search problem. The nodes are the possible states of a tetris board. The board is a 20 x 10 grid, and each cell can be occupied or not. So a loose upper bound is 2^60 ~ 1e18 states, though many of these are impossible. The paths are sequences of actions to maneuver a piece into place. A piece can be rotated left or right, as well as shifted left or right. Assuming one action per drop frame, an upper bound is 4^20 ~ 1e12 paths per piece, though many of these actions are illegal. Finding the optimal path has been shown to be NP complete. These are difficult problems!
+Tetris can be formulated as a graph search problem. The nodes are the possible states of a tetris board. The board is a 20 x 10 grid, and each cell can be occupied or not. So a loose upper bound is 2^200 ~ 1e60 states, though many of these are impossible. The paths are sequences of actions to maneuver a piece into place. A piece can be rotated left or right, as well as shifted left or right. Assuming one action per drop frame, an upper bound is 4^20 ~ 1e12 paths per piece, though many of these actions are illegal. Finding the optimal path has been shown to be NP complete. These are difficult problems!
 
 ## Backend
 Finding the best end states is an open problem. Various ML algorithms have been used for super human evaluation functions. However, training time is directly dependent on the performance of the game engine. The main goal is to provide an efficient backend to optimize game execution and board state cacheing. A lightweight gui using SFML2 will display real time performance of a trained agent.
